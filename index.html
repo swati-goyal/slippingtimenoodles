@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>slipping time noodles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Literata:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #241B2F;
+    --bg-panel: #2E2140;
+    --text: #F2E9DC;
+    --text-dim: #C9BFCF;
+    --accent-warm: #E8A33D;
+    --accent-cool: #4E8C82;
+    --accent-ache: #C6597A;
+    --line: rgba(242,233,220,0.14);
+    --max-w: 760px;
+  }
+
+  *{ box-sizing: border-box; }
+  html{ scroll-behavior: smooth; }
+
+  body{
+    margin:0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Literata', serif;
+    font-size: 18px;
+    line-height: 1.65;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    html{ scroll-behavior: auto; }
+    *{ animation: none !important; transition: none !important; }
+  }
+
+  a{ color: inherit; }
+  a:focus-visible, button:focus-visible{
+    outline: 2px solid var(--accent-warm);
+    outline-offset: 3px;
+  }
+
+  .wrap{
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 28px;
+    position: relative;
+  }
+
+  /* ---------- noodle thread ---------- */
+  .noodle-svg{
+    position: absolute;
+    top: 0;
+    left: -40px;
+    width: 90px;
+    height: 100%;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .noodle-path{
+    fill: none;
+    stroke: var(--accent-warm);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    opacity: 0.55;
+    stroke-dasharray: 3000;
+    stroke-dashoffset: 3000;
+    transition: stroke-dashoffset 0.1s linear;
+  }
+  @media (max-width: 720px){
+    .noodle-svg{ left: -8px; width: 40px; }
+  }
+
+  /* ---------- hero ---------- */
+  header.hero{
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 40px 0 60px;
+  }
+  .eyebrow{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent-cool);
+    margin: 0 0 22px;
+  }
+  h1.title{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: clamp(52px, 10vw, 108px);
+    line-height: 0.98;
+    margin: 0 0 28px;
+    letter-spacing: -0.01em;
+  }
+  h1.title em{
+    font-style: italic;
+    font-weight: 400;
+    color: var(--accent-warm);
+  }
+  .hero-sub{
+    max-width: 46ch;
+    font-size: 20px;
+    color: var(--text-dim);
+    margin: 0 0 40px;
+  }
+  .hero-sub .ache{ color: var(--accent-ache); font-style: italic; }
+
+  .scroll-cue{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    width: fit-content;
+  }
+  .scroll-cue .bounce{
+    display: inline-block;
+    animation: bob 2.4s ease-in-out infinite;
+  }
+  @keyframes bob{
+    0%,100%{ transform: translateY(0); }
+    50%{ transform: translateY(6px); }
+  }
+
+  /* ---------- sections ---------- */
+  section{
+    position: relative;
+    padding: 90px 0;
+    border-top: 1px solid var(--line);
+    z-index: 1;
+  }
+  section:first-of-type{ border-top: none; }
+
+  .section-head{
+    display: flex;
+    align-items: baseline;
+    gap: 16px;
+    margin-bottom: 34px;
+    flex-wrap: wrap;
+  }
+  .section-mark{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent-warm);
+  }
+  h2{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-style: italic;
+    font-size: clamp(30px, 5vw, 42px);
+    margin: 0;
+  }
+  .section-desc{
+    max-width: 58ch;
+    color: var(--text-dim);
+    margin: 0 0 40px;
+    font-size: 17px;
+  }
+
+  .card-row{
+    display: grid;
+    gap: 20px;
+  }
+  .card{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 26px 28px;
+    transition: transform 0.25s ease, border-color 0.25s ease;
+  }
+  .card:hover{
+    transform: translateY(-3px);
+    border-color: var(--accent-warm);
+  }
+  .card h3{
+    font-family: 'Fraunces', serif;
+    font-weight: 500;
+    font-size: 20px;
+    margin: 0 0 8px;
+  }
+  .card p{
+    margin: 0;
+    color: var(--text-dim);
+    font-size: 16px;
+  }
+  .tag{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    display: inline-block;
+    margin-top: 14px;
+    color: var(--accent-cool);
+  }
+
+  /* writing section — poem-forward */
+  .poem{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    line-height: 1.7;
+    color: var(--text);
+    border-left: 2px solid var(--accent-ache);
+    padding-left: 26px;
+    margin: 0 0 36px;
+  }
+  .poem span{ display: block; }
+  .placeholder-note{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    opacity: 0.7;
+  }
+
+  .link-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    margin-top: 24px;
+  }
+  .link-pill{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 9px 16px;
+    border: 1px solid var(--line);
+    border-radius: 100px;
+    text-decoration: none;
+    color: var(--text);
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .link-pill:hover{
+    border-color: var(--accent-warm);
+    color: var(--accent-warm);
+  }
+
+  /* math section accents */
+  #math .section-mark{ color: var(--accent-cool); }
+  #math .card:hover{ border-color: var(--accent-cool); }
+
+  /* engineering section accents */
+  #engineering .section-mark{ color: var(--accent-ache); }
+  #engineering .card:hover{ border-color: var(--accent-ache); }
+  .cv-line{
+    display: flex;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 16px;
+  }
+  .cv-line:last-child{ border-bottom: none; }
+  .cv-role{ color: var(--text); }
+  .cv-meta{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+    white-space: nowrap;
+  }
+
+  /* in-between: mixed grid */
+  #between .card-row{
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  }
+
+  footer{
+    padding: 70px 0 60px;
+    border-top: 1px solid var(--line);
+    position: relative;
+    z-index: 1;
+  }
+  footer .foot-line{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--text-dim);
+  }
+  footer .foot-title{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 26px;
+    margin: 0 0 18px;
+  }
+
+  @media (min-width: 620px){
+    .card-row.two-col{ grid-template-columns: 1fr 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<svg class="noodle-svg" id="noodleSvg" viewBox="0 0 90 3400" preserveAspectRatio="none" aria-hidden="true">
+  <path class="noodle-path" id="noodlePath" d="M45,0
+    C10,120 80,220 45,340
+    S10,560 45,680
+    S80,900 45,1020
+    S10,1240 45,1360
+    S80,1580 45,1700
+    S10,1920 45,2040
+    S80,2260 45,2380
+    S10,2600 45,2720
+    S80,2940 45,3060
+    S10,3280 45,3400" />
+</svg>
+
+<div class="wrap">
+
+  <header class="hero">
+    <p class="eyebrow">a personal atlas / est. 2026</p>
+    <h1 class="title">slipping time<br><em>noodles.</em></h1>
+    <p class="hero-sub">A life doesn't sort itself into folders. Mine loops &mdash; a proof <span class="ache">aches</span> like a poem, a poem behaves like an engineering problem, and Tuesday keeps looping back through 1998. This is where the noodle goes when it slips.</p>
+    <span class="scroll-cue"><span class="bounce">&darr;</span> keep pulling the thread</span>
+  </header>
+
+  <section id="writing">
+    <div class="section-head">
+      <span class="section-mark">01 &mdash; not a sequence, just a number</span>
+      <h2>Writing</h2>
+    </div>
+    <p class="section-desc">Poems, essays, and the feminist pieces that wouldn't stay quiet. Some of it signs its real name. Some of it hides as Knightess.</p>
+
+    <p class="poem">
+      <span>[ a placeholder verse &mdash; swap this for a real fragment ]</span>
+      <span>the noodle does not know it is a noodle</span>
+      <span>it only knows it is slipping, and calls that living</span>
+    </p>
+    <p class="placeholder-note">&uarr; drop in three lines of your own here. this is a stand-in, not your voice.</p>
+
+    <div class="link-list">
+      <a class="link-pill" href="#">Medium &mdash; under my own name</a>
+      <a class="link-pill" href="#">Medium &mdash; as Knightess</a>
+      <a class="link-pill" href="#">Tumblr &mdash; bhasad</a>
+    </div>
+  </section>
+
+  <section id="math">
+    <div class="section-head">
+      <span class="section-mark">&infin; &mdash; math &amp; other curiosities</span>
+      <h2>Math &amp; Curiosities</h2>
+    </div>
+    <p class="section-desc">Half-finished proofs, things I find beautiful, and the slow work of a mathematician-in-training. Not a lecture. A sketchbook.</p>
+
+    <div class="card-row two-col">
+      <div class="card">
+        <h3>Mathematics for Poets</h3>
+        <p>A big mathematical idea, opened with a poem that already knew it. Quarterly, unhurried, in progress.</p>
+        <span class="tag">ongoing &mdash; current focus</span>
+      </div>
+      <div class="card">
+        <h3>Reading log</h3>
+        <p>Notes from Wolf's <em>Proof, Logic, and Conjecture</em>, and whatever comes after it, in the years before Hagen.</p>
+        <span class="tag">rebuilding &mdash; 2026&ndash;2029</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="engineering">
+    <div class="section-head">
+      <span class="section-mark">02 &mdash; curiosity, credentialed</span>
+      <h2>Engineering</h2>
+    </div>
+    <p class="section-desc">The part of the site that looks the most like a CV, framed the way it actually feels: as curiosity that happens to pay rent.</p>
+
+    <div class="card">
+      <div class="cv-line">
+        <span class="cv-role">SDET &mdash; Orbem, Munich</span>
+        <span class="cv-meta">2025 &ndash; present</span>
+      </div>
+      <div class="cv-line">
+        <span class="cv-role">Testing infrastructure for research &amp; ML systems, MRI-adjacent</span>
+        <span class="cv-meta">ongoing</span>
+      </div>
+      <div class="cv-line">
+        <span class="cv-role">Currently deepening AI / CS engineering skills</span>
+        <span class="cv-meta">current focus</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="between">
+    <div class="section-head">
+      <span class="section-mark">&mdash; &mdash; everything in between</span>
+      <h2>In Between</h2>
+    </div>
+    <p class="section-desc">No folder for these. That's the point.</p>
+
+    <div class="card-row">
+      <div class="card"><h3>Astrophotography</h3><p>A rig, a budget, and a lot of patient waiting for clear sky.</p></div>
+      <div class="card"><h3>Lindy hop</h3><p>Boogie B&auml;ren, still on Level 1, still delighted by it.</p></div>
+      <div class="card"><h3>German, A1.2</h3><p>The current gate to almost everything else on this list.</p></div>
+      <div class="card"><h3>Puzzles &amp; folklore</h3><p>Jigsaw pieces, selkies, and the odd corner of mythology.</p></div>
+    </div>
+  </section>
+
+  <footer>
+    <p class="foot-title">say hello, or don't &mdash; the noodle keeps slipping either way.</p>
+    <p class="foot-line">slippingtimenoodles.com &middot; built to loop, not to finish</p>
+  </footer>
+
+</div>
+
+<script>
+  (function(){
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    var path = document.getElementById('noodlePath');
+    var svg = document.getElementById('noodleSvg');
+    if (!path || !svg) return;
+
+    function setSvgHeight(){
+      var h = document.body.scrollHeight;
+      svg.setAttribute('viewBox', '0 0 90 ' + h);
+      svg.style.height = h + 'px';
+      // stretch the path's own coordinate system isn't trivial to rescale,
+      // so instead we scale via CSS height + preserveAspectRatio 'none'
+    }
+    setSvgHeight();
+    window.addEventListener('resize', setSvgHeight);
+
+    var length = path.getTotalLength();
+    path.style.strokeDasharray = length;
+    path.style.strokeDashoffset = reduce ? 0 : length;
+
+    function onScroll(){
+      if (reduce) return;
+      var scrollTop = window.scrollY;
+      var docHeight = document.body.scrollHeight - window.innerHeight;
+      var progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
+      var offset = length - (length * progress);
+      path.style.strokeDashoffset = offset;
+    }
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  })();
+</script>
+
+</body>
+</html>
