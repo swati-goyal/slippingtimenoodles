@@ -3,6 +3,14 @@ import Card from '../components/Card.astro';
 import Footer from '../components/Footer.astro';
 import NoodleThread from '../components/NoodleThread.astro';
 import Section from '../components/Section.astro';
+import { getArtwork } from '../lib/sanity';
+
+const cmsArtwork = await getArtwork();
+const artwork = cmsArtwork.length ? cmsArtwork : [
+  { title: '[placeholder] untitled sketch', year: '2026', src: '', caption: 'graphite \u2014 swap src for a real photo of this' },
+  { title: '[placeholder] noodle study', year: '2026', src: '', caption: 'ink \u2014 swap src for a real photo of this' },
+  { title: '[placeholder] a stray doodle', year: '2026', src: '', caption: 'pencil \u2014 swap src for a real photo of this' },
+];
 ---
 <!DOCTYPE html>
 <html lang="en">
@@ -13,7 +21,7 @@ import Section from '../components/Section.astro';
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Literata:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style>
+<style is:global>
   :root{
     --bg: #241B2F;
     --bg-panel: #2E2140;
@@ -802,11 +810,7 @@ import Section from '../components/Section.astro';
      To add a piece: copy one object, set src to your image URL
      (or leave src empty to show a placeholder frame).
      ============================================================ */
-  var ART = [
-    { id: 'a1', title: '[placeholder] untitled sketch', year: '2026', src: '', caption: 'graphite \u2014 swap src for a real photo of this' },
-    { id: 'a2', title: '[placeholder] noodle study', year: '2026', src: '', caption: 'ink \u2014 swap src for a real photo of this' },
-    { id: 'a3', title: '[placeholder] a stray doodle', year: '2026', src: '', caption: 'pencil \u2014 swap src for a real photo of this' }
-  ];
+  var ART = artwork;
 
   (function initCarousel(){
     var track = document.getElementById('artTrack');

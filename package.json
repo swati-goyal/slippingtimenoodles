@@ -21,6 +21,8 @@
   },
   "homepage": "https://github.com/swati-goyal/slippingtimenoodles#readme",
   "dependencies": {
+    "@sanity/client": "^8.2.0",
+    "@sanity/image-url": "^2.1.1",
     "astro": "^7.2.4"
   }
 }
