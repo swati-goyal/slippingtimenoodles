@@ -64,15 +64,18 @@
   .noodle-path{
     fill: none;
     stroke: var(--accent-warm);
-    stroke-width: 2.2;
+    stroke-width: 9;
     stroke-linecap: round;
-    opacity: 0.55;
+    stroke-linejoin: round;
+    opacity: 0.6;
+    filter: drop-shadow(0 0 6px rgba(232,163,61,0.25));
     stroke-dasharray: 3000;
     stroke-dashoffset: 3000;
     transition: stroke-dashoffset 0.1s linear;
   }
   @media (max-width: 720px){
     .noodle-svg{ left: -8px; width: 40px; }
+    .noodle-path{ stroke-width: 6; }
   }
 
   /* ---------- hero ---------- */
@@ -349,6 +352,104 @@
   .entry-tag{ font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-right: 12px; }
   .no-results{ color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
 
+  /* ---------- artwork carousel ---------- */
+  #art .section-mark{ color: var(--accent-cool); }
+  .carousel{ position: relative; }
+  .carousel-track{
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    padding-bottom: 14px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: var(--accent-warm) transparent;
+  }
+  .carousel-track::-webkit-scrollbar{ height: 6px; }
+  .carousel-track::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 4px; }
+  .carousel-slide{
+    flex: 0 0 auto;
+    width: min(420px, 78vw);
+    scroll-snap-align: center;
+  }
+  .art-frame{
+    aspect-ratio: 4 / 3;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+  }
+  .art-frame img{ width: 100%; height: 100%; object-fit: cover; display: block; }
+  .art-placeholder{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    text-align: center;
+    padding: 20px;
+  }
+  .art-title{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 17px;
+    margin: 14px 0 4px;
+  }
+  .art-caption{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+  }
+  .carousel-controls{
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  .carousel-btn{
+    background: transparent;
+    border: 1px solid var(--line);
+    color: var(--text);
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 16px;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .carousel-btn:hover{ border-color: var(--accent-warm); color: var(--accent-warm); }
+  .carousel-dots{ display: flex; gap: 8px; margin-left: 6px; align-items: center; }
+  .dot{
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: var(--line);
+    cursor: pointer;
+    border: none;
+    padding: 0;
+  }
+  .dot.active{ background: var(--accent-warm); }
+
+  /* ---------- mobile ---------- */
+  @media (max-width: 640px){
+    body{ font-size: 17px; }
+    .wrap{ padding: 0 20px; }
+    section{ padding: 56px 0; }
+    header.hero{ min-height: 70vh; padding: 30px 0 36px; }
+    .hero-sub{ font-size: 18px; }
+    .card{ padding: 20px 22px; }
+    .cv-line{ flex-direction: column; align-items: flex-start; gap: 4px; }
+    .archive-search{ font-size: 16px; }
+    .entry summary{ gap: 8px 12px; }
+    .carousel-slide{ width: 82vw; }
+    footer{ padding: 50px 0 40px; }
+  }
+  @media (max-width: 420px){
+    .noodle-svg{ display: none; }
+  }
+
   footer{
     padding: 70px 0 60px;
     border-top: 1px solid var(--line);
@@ -489,6 +590,23 @@
       <div class="card"><h3>Lindy hop</h3><p>Boogie B&auml;ren, still on Level 1, still delighted by it.</p></div>
       <div class="card"><h3>German, A1.2</h3><p>The current gate to almost everything else on this list.</p></div>
       <div class="card"><h3>Puzzles &amp; folklore</h3><p>Jigsaw pieces, selkies, and the odd corner of mythology.</p></div>
+    </div>
+  </section>
+
+  <section id="art">
+    <div class="section-head">
+      <span class="section-mark">&sect; &mdash; the visual pile</span>
+      <h2>Artwork</h2>
+    </div>
+    <p class="section-desc">Sketches, photos, whatever gets made with hands instead of words. Swipe or use the arrows.</p>
+
+    <div class="carousel">
+      <div class="carousel-track" id="artTrack"></div>
+      <div class="carousel-controls">
+        <button class="carousel-btn" id="artPrev" type="button" aria-label="Previous artwork">&larr;</button>
+        <button class="carousel-btn" id="artNext" type="button" aria-label="Next artwork">&rarr;</button>
+        <div class="carousel-dots" id="artDots"></div>
+      </div>
     </div>
   </section>
 
@@ -671,6 +789,96 @@
     }
 
     render();
+  })();
+</script>
+
+<script>
+  /* ============================================================
+     ARTWORK DATA
+     To add a piece: copy one object, set src to your image URL
+     (or leave src empty to show a placeholder frame).
+     ============================================================ */
+  var ART = [
+    { id: 'a1', title: '[placeholder] untitled sketch', year: '2026', src: '', caption: 'graphite \u2014 swap src for a real photo of this' },
+    { id: 'a2', title: '[placeholder] noodle study', year: '2026', src: '', caption: 'ink \u2014 swap src for a real photo of this' },
+    { id: 'a3', title: '[placeholder] a stray doodle', year: '2026', src: '', caption: 'pencil \u2014 swap src for a real photo of this' }
+  ];
+
+  (function initCarousel(){
+    var track = document.getElementById('artTrack');
+    var dotsEl = document.getElementById('artDots');
+    var prevBtn = document.getElementById('artPrev');
+    var nextBtn = document.getElementById('artNext');
+    if (!track) return;
+
+    ART.forEach(function(art, i){
+      var slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.id = 'artSlide-' + i;
+
+      var frame = document.createElement('div');
+      frame.className = 'art-frame';
+      if (art.src){
+        var img = document.createElement('img');
+        img.src = art.src;
+        img.alt = art.title;
+        frame.appendChild(img);
+      } else {
+        var ph = document.createElement('div');
+        ph.className = 'art-placeholder';
+        ph.textContent = '[ image placeholder \u2014 add a src ]';
+        frame.appendChild(ph);
+      }
+
+      var title = document.createElement('p');
+      title.className = 'art-title';
+      title.textContent = art.title;
+
+      var caption = document.createElement('p');
+      caption.className = 'art-caption';
+      caption.textContent = art.year + ' \u00b7 ' + art.caption;
+
+      slide.appendChild(frame);
+      slide.appendChild(title);
+      slide.appendChild(caption);
+      track.appendChild(slide);
+
+      var dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', 'Go to artwork ' + (i + 1));
+      dot.addEventListener('click', function(){
+        slide.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+      dotsEl.appendChild(dot);
+    });
+
+    var dots = Array.prototype.slice.call(dotsEl.children);
+
+    function setActiveDot(i){
+      dots.forEach(function(d, j){ d.classList.toggle('active', j === i); });
+    }
+
+    if ('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            var idx = Array.prototype.indexOf.call(track.children, entry.target);
+            setActiveDot(idx);
+          }
+        });
+      }, { root: track, threshold: 0.6 });
+      Array.prototype.forEach.call(track.children, function(slide){ observer.observe(slide); });
+    }
+
+    function scrollByOne(dir){
+      var slideEl = track.children[0];
+      var gap = 20;
+      var amount = (slideEl ? slideEl.getBoundingClientRect().width : 300) + gap;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    prevBtn.addEventListener('click', function(){ scrollByOne(-1); });
+    nextBtn.addEventListener('click', function(){ scrollByOne(1); });
   })();
 </script>
 
