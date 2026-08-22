@@ -270,6 +270,85 @@
     grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
   }
 
+  /* ---------- archive ---------- */
+  #archive .section-mark{ color: var(--accent-warm); }
+  .archive-search{
+    width: 100%;
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 12px 16px;
+    color: var(--text);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
+  .archive-search::placeholder{ color: var(--text-dim); }
+  .chip-row{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .chip{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 7px 14px;
+    border-radius: 100px;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease;
+  }
+  .chip.active{ border-color: var(--accent-warm); color: var(--accent-warm); }
+  .archive-count{
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--text-dim);
+    margin: 10px 0 24px;
+  }
+  .entry{ border-bottom: 1px solid var(--line); padding: 20px 0; }
+  .entry:first-child{ padding-top: 0; }
+  .entry summary{
+    cursor: pointer;
+    list-style: none;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 12px;
+  }
+  .entry summary::-webkit-details-marker{ display: none; }
+  .entry summary::before{
+    content: '+ ';
+    color: var(--accent-warm);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .entry[open] summary::before{ content: '\2212 '; }
+  .entry-title{ font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; }
+  .entry-meta{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); }
+  .entry-type{ text-transform: uppercase; letter-spacing: 0.05em; }
+  .entry-type.poem{ color: var(--accent-ache); }
+  .entry-type.essay{ color: var(--accent-warm); }
+  .entry-type.note{ color: var(--accent-cool); }
+  .entry-body{
+    margin: 16px 0 0;
+    font-size: 16px;
+    line-height: 1.75;
+    color: var(--text);
+    white-space: pre-line;
+  }
+  .entry-body.is-poem{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 19px;
+    border-left: 2px solid var(--accent-ache);
+    padding-left: 22px;
+  }
+  .entry-tags{ margin-top: 14px; }
+  .entry-tag{ font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-right: 12px; }
+  .no-results{ color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
+
   footer{
     padding: 70px 0 60px;
     border-top: 1px solid var(--line);
@@ -336,7 +415,22 @@
       <a class="link-pill" href="#">Medium &mdash; under my own name</a>
       <a class="link-pill" href="#">Medium &mdash; as Knightess</a>
       <a class="link-pill" href="#">Tumblr &mdash; bhasad</a>
+      <a class="link-pill" href="#archive">&darr; the full archive</a>
     </div>
+  </section>
+
+  <section id="archive">
+    <div class="section-head">
+      <span class="section-mark">&sect; &mdash; the whole pile, searchable</span>
+      <h2>Archive</h2>
+    </div>
+    <p class="section-desc">Every poem, essay, and stray note, hosted here in full &mdash; filter by kind or thread, or just search for the word you half-remember.</p>
+
+    <input type="text" class="archive-search" id="archiveSearch" placeholder="search titles, tags, or text&hellip;" aria-label="Search archive">
+    <div class="chip-row" id="typeChips" role="group" aria-label="Filter by type"></div>
+    <div class="chip-row" id="tagChips" role="group" aria-label="Filter by tag"></div>
+    <p class="archive-count" id="archiveCount"></p>
+    <div id="entryList"></div>
   </section>
 
   <section id="math">
@@ -436,6 +530,147 @@
     }
     document.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
+  })();
+</script>
+
+<script>
+  /* ============================================================
+     ARCHIVE DATA
+     To add a new piece: copy one object below and edit it.
+     type:     'poem' | 'essay' | 'note'
+     identity: 'self' | 'knightess'
+     tags:     lowercase, no # needed
+     body:     use \n for line breaks (poems render literally)
+     ============================================================ */
+  var ENTRIES = [
+    {
+      id: 'e1', title: '[placeholder] on forgetting slowly', type: 'poem', identity: 'self',
+      date: '2026', tags: ['love', 'distance'],
+      body: 'a placeholder stanza\nswap this for your real poem\nkeep the ache, lose the name'
+    },
+    {
+      id: 'e2', title: '[placeholder] a pretty man, said on purpose', type: 'poem', identity: 'knightess',
+      date: '2026', tags: ['gender', 'inversion'],
+      body: 'another placeholder stanza\nyou know how this line should go\nbetter than I do'
+    },
+    {
+      id: 'e3', title: '[placeholder] why we test what we build', type: 'essay', identity: 'self',
+      date: '2026', tags: ['engineering', 'philosophy'],
+      body: 'A placeholder essay opening. Replace with your real paragraphs \u2014 this is just holding the shape and the formatting.'
+    },
+    {
+      id: 'e4', title: '[placeholder] reading notes \u2014 Wolf, ch.1', type: 'note', identity: 'self',
+      date: '2026', tags: ['math', 'proof'],
+      body: 'Placeholder reading notes. Swap for your actual annotations from Proof, Logic, and Conjecture.'
+    },
+    {
+      id: 'e5', title: '[placeholder] a shape for testing infrastructure', type: 'note', identity: 'self',
+      date: '2026', tags: ['engineering', 'work'],
+      body: 'Placeholder work note. Replace with something real from your notebook.'
+    }
+  ];
+
+  (function initArchive(){
+    var typeChipsEl = document.getElementById('typeChips');
+    var tagChipsEl = document.getElementById('tagChips');
+    var searchEl = document.getElementById('archiveSearch');
+    var listEl = document.getElementById('entryList');
+    var countEl = document.getElementById('archiveCount');
+    if (!listEl) return;
+
+    var activeType = 'all';
+    var activeTags = {};
+
+    function el(tag, cls, text){
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    var types = ['all'].concat(ENTRIES.map(function(e){ return e.type; })
+      .filter(function(t, i, arr){ return arr.indexOf(t) === i; }));
+
+    var allTags = ENTRIES.reduce(function(acc, e){ return acc.concat(e.tags); }, [])
+      .filter(function(t, i, arr){ return arr.indexOf(t) === i; })
+      .sort();
+
+    types.forEach(function(t){
+      var chip = el('button', 'chip' + (t === 'all' ? ' active' : ''), t);
+      chip.type = 'button';
+      chip.addEventListener('click', function(){
+        activeType = t;
+        Array.prototype.forEach.call(typeChipsEl.children, function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        render();
+      });
+      typeChipsEl.appendChild(chip);
+    });
+
+    allTags.forEach(function(tag){
+      var chip = el('button', 'chip', '#' + tag);
+      chip.type = 'button';
+      chip.addEventListener('click', function(){
+        if (activeTags[tag]) { delete activeTags[tag]; chip.classList.remove('active'); }
+        else { activeTags[tag] = true; chip.classList.add('active'); }
+        render();
+      });
+      tagChipsEl.appendChild(chip);
+    });
+
+    searchEl.addEventListener('input', render);
+
+    function matches(entry){
+      if (activeType !== 'all' && entry.type !== activeType) return false;
+      var neededTags = Object.keys(activeTags);
+      if (neededTags.length > 0){
+        var hasAll = neededTags.every(function(t){ return entry.tags.indexOf(t) !== -1; });
+        if (!hasAll) return false;
+      }
+      var q = searchEl.value.trim().toLowerCase();
+      if (q){
+        var hay = (entry.title + ' ' + entry.tags.join(' ') + ' ' + entry.body).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    }
+
+    function render(){
+      listEl.innerHTML = '';
+      var results = ENTRIES.filter(matches);
+      countEl.textContent = results.length + (results.length === 1 ? ' entry' : ' entries');
+
+      if (results.length === 0){
+        listEl.appendChild(el('p', 'no-results', 'nothing matches yet \u2014 try clearing a filter.'));
+        return;
+      }
+
+      results.forEach(function(entry){
+        var details = el('details', 'entry');
+        var summary = document.createElement('summary');
+
+        var title = el('span', 'entry-title', entry.title);
+        var meta = el('span', 'entry-meta');
+        var typeSpan = el('span', 'entry-type ' + entry.type, entry.type);
+        meta.appendChild(typeSpan);
+        meta.appendChild(document.createTextNode(' \u00b7 ' + entry.date + ' \u00b7 ' + (entry.identity === 'knightess' ? 'as Knightess' : 'self')));
+
+        summary.appendChild(title);
+        summary.appendChild(meta);
+
+        var body = el('div', 'entry-body' + (entry.type === 'poem' ? ' is-poem' : ''), entry.body);
+
+        var tagsRow = el('div', 'entry-tags');
+        entry.tags.forEach(function(t){ tagsRow.appendChild(el('span', 'entry-tag', '#' + t)); });
+
+        details.appendChild(summary);
+        details.appendChild(body);
+        details.appendChild(tagsRow);
+        listEl.appendChild(details);
+      });
+    }
+
+    render();
   })();
 </script>
 
