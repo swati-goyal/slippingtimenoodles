@@ -1,3 +1,9 @@
+---
+import Card from '../components/Card.astro';
+import Footer from '../components/Footer.astro';
+import NoodleThread from '../components/NoodleThread.astro';
+import Section from '../components/Section.astro';
+---
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -543,16 +549,16 @@
     <p class="section-desc">Half-finished proofs, things I find beautiful, and the slow work of a mathematician-in-training. Not a lecture. A sketchbook.</p>
 
     <div class="card-row two-col">
-      <div class="card">
+      <Card>
         <h3>Mathematics for Poets</h3>
         <p>A big mathematical idea, opened with a poem that already knew it. Quarterly, unhurried, in progress.</p>
         <span class="tag">ongoing &mdash; current focus</span>
-      </div>
-      <div class="card">
+      </Card>
+      <Card>
         <h3>Reading log</h3>
         <p>Notes from Wolf's <em>Proof, Logic, and Conjecture</em>, and whatever comes after it, in the years before Hagen.</p>
         <span class="tag">rebuilding &mdash; 2026&ndash;2029</span>
-      </div>
+      </Card>
     </div>
   </section>
 
@@ -587,10 +593,10 @@
     <p class="section-desc">No folder for these. That's the point.</p>
 
     <div class="card-row">
-      <div class="card"><h3>Astrophotography</h3><p>A rig, a budget, and a lot of patient waiting for clear sky.</p></div>
-      <div class="card"><h3>Lindy hop</h3><p>Boogie B&auml;ren, still on Level 1, still delighted by it.</p></div>
-      <div class="card"><h3>German, A1.2</h3><p>The current gate to almost everything else on this list.</p></div>
-      <div class="card"><h3>Puzzles &amp; folklore</h3><p>Jigsaw pieces, selkies, and the odd corner of mythology.</p></div>
+      <Card><h3>Astrophotography</h3><p>A rig, a budget, and a lot of patient waiting for clear sky.</p></Card>
+      <Card><h3>Lindy hop</h3><p>Boogie B&auml;ren, still on Level 1, still delighted by it.</p></Card>
+      <Card><h3>German, A1.2</h3><p>The current gate to almost everything else on this list.</p></Card>
+      <Card><h3>Puzzles &amp; folklore</h3><p>Jigsaw pieces, selkies, and the odd corner of mythology.</p></Card>
     </div>
   </section>
 
@@ -611,10 +617,7 @@
     </div>
   </section>
 
-  <footer>
-    <p class="foot-title">say hello, or don't &mdash; the noodle keeps slipping either way.</p>
-    <p class="foot-line">slippingtimenoodles.com &middot; built to loop, not to finish</p>
-  </footer>
+  <Footer />
 
 </div>
 

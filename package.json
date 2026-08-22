@@ -1,0 +1,26 @@
+{
+  "name": "slippingtimenoodles",
+  "version": "1.0.0",
+  "description": "A personal atlas for writing, mathematics, engineering, and everything in between.",
+  "main": "index.js",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/swati-goyal/slippingtimenoodles.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/swati-goyal/slippingtimenoodles/issues"
+  },
+  "homepage": "https://github.com/swati-goyal/slippingtimenoodles#readme",
+  "dependencies": {
+    "astro": "^7.2.4"
+  }
+}

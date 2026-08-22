@@ -4,22 +4,27 @@ A personal atlas for writing, mathematics, engineering, and everything in betwee
 
 ## Local preview
 
-Open `index.html` directly in a browser, or serve the folder locally:
+Install dependencies and start Astro locally:
 
 ```sh
-python3 -m http.server 8000
+npm install
+npm run dev
 ```
 
-Then visit <http://localhost:8000>.
+Then visit <http://localhost:4321>.
 
 ## Deployment
 
-This is a static website with no build step. Upload the project folder to a static host such as Netlify, GitHub Pages, or Cloudflare Pages. The published entry point is `index.html`.
+This is an Astro static website. Netlify can deploy it from GitHub with the build command `npm run build` and publish directory `dist`.
 
 ## Project structure
 
 ```text
 .
-├── index.html
+├── src/
+│   ├── components/
+│   └── pages/
+├── package.json
+├── package-lock.json
 └── README.md
 ```
