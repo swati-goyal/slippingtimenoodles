@@ -1,7 +1,15 @@
 ---
 import Card from '../components/Card.astro';
 import Footer from '../components/Footer.astro';
-import Section from '../components/Section.astro';
+import SideClock from '../components/SideClock.astro';
+import Hero from '../components/sections/Hero.astro';
+import WritingSection from '../components/sections/WritingSection.astro';
+import PortraitsSection from '../components/sections/PortraitsSection.astro';
+import ArchiveSection from '../components/sections/ArchiveSection.astro';
+import MathSection from '../components/sections/MathSection.astro';
+import EngineeringSection from '../components/sections/EngineeringSection.astro';
+import BetweenSection from '../components/sections/BetweenSection.astro';
+import ArtworkSection from '../components/sections/ArtworkSection.astro';
 import { getArtwork } from '../lib/sanity';
 
 const cmsArtwork = await getArtwork();
@@ -20,626 +28,93 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,500;0,9..144,600;1,9..144,400;1,9..144,500&family=Literata:ital,wght@0,400;0,500;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
-<style is:global>
-  :root{
-    --bg: #241B2F;
-    --bg-panel: #2E2140;
-    --text: #F2E9DC;
-    --text-dim: #C9BFCF;
-    --accent-warm: #E8A33D;
-    --accent-cool: #4E8C82;
-    --accent-ache: #C6597A;
-    --line: rgba(242,233,220,0.14);
-    --max-w: 760px;
-  }
-
-  *{ box-sizing: border-box; }
-  html{ scroll-behavior: smooth; }
-
-  body{
-    margin:0;
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Literata', serif;
-    font-size: 18px;
-    line-height: 1.65;
-    -webkit-font-smoothing: antialiased;
-  }
-
-  @media (prefers-reduced-motion: reduce){
-    html{ scroll-behavior: auto; }
-    *{ animation: none !important; transition: none !important; }
-  }
-
-  a{ color: inherit; }
-  a:focus-visible, button:focus-visible{
-    outline: 2px solid var(--accent-warm);
-    outline-offset: 3px;
-  }
-
-  .wrap{
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 28px;
-    position: relative;
-  }
-
-  /* ---------- hero ---------- */
-  header.hero{
-    min-height: 88vh;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    padding: 40px 0 60px;
-  }
-  .eyebrow{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: var(--accent-cool);
-    margin: 0 0 22px;
-  }
-  h1.title{
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: clamp(52px, 10vw, 108px);
-    line-height: 0.98;
-    margin: 0 0 28px;
-    letter-spacing: -0.01em;
-  }
-  h1.title em{
-    font-style: italic;
-    font-weight: 400;
-    color: var(--accent-warm);
-  }
-  .hero-sub{
-    max-width: 46ch;
-    font-size: 20px;
-    color: var(--text-dim);
-    margin: 0 0 40px;
-  }
-  .hero-sub .ache{ color: var(--accent-ache); font-style: italic; }
-
-  .scroll-cue{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-dim);
-    display: inline-flex;
-    align-items: center;
-    gap: 10px;
-    width: fit-content;
-  }
-  .scroll-cue .bounce{
-    display: inline-block;
-    animation: bob 2.4s ease-in-out infinite;
-  }
-  @keyframes bob{
-    0%,100%{ transform: translateY(0); }
-    50%{ transform: translateY(6px); }
-  }
-
-  /* ---------- sections ---------- */
-  section{
-    position: relative;
-    padding: 90px 0;
-    border-top: 1px solid var(--line);
-    z-index: 1;
-  }
-  section:first-of-type{ border-top: none; }
-
-  .section-head{
-    display: flex;
-    align-items: baseline;
-    gap: 16px;
-    margin-bottom: 34px;
-    flex-wrap: wrap;
-  }
-  .section-mark{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--accent-warm);
-  }
-  h2{
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-style: italic;
-    font-size: clamp(30px, 5vw, 42px);
-    margin: 0;
-  }
-  .section-desc{
-    max-width: 58ch;
-    color: var(--text-dim);
-    margin: 0 0 40px;
-    font-size: 17px;
-  }
-
-  .card-row{
-    display: grid;
-    gap: 20px;
-  }
-  .card{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 4px;
-    padding: 26px 28px;
-    transition: transform 0.25s ease, border-color 0.25s ease;
-  }
-  .card:hover{
-    transform: translateY(-3px);
-    border-color: var(--accent-warm);
-  }
-  .card h3{
-    font-family: 'Fraunces', serif;
-    font-weight: 500;
-    font-size: 20px;
-    margin: 0 0 8px;
-  }
-  .card p{
-    margin: 0;
-    color: var(--text-dim);
-    font-size: 16px;
-  }
-  .tag{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    display: inline-block;
-    margin-top: 14px;
-    color: var(--accent-cool);
-  }
-
-  /* writing section — poem-forward */
-  .poem{
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 22px;
-    line-height: 1.7;
-    color: var(--text);
-    border-left: 2px solid var(--accent-ache);
-    padding-left: 26px;
-    margin: 0 0 36px;
-  }
-  .poem span{ display: block; }
-  .placeholder-note{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-dim);
-    opacity: 0.7;
-  }
-
-  .portrait-list{
-    display: grid;
-    gap: 18px;
-  }
-  .portrait{
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 24px 26px;
-  }
-  .portrait p{
-    margin: 0;
-    color: var(--text);
-    font-size: 18px;
-    line-height: 1.7;
-  }
-  .portrait-note{
-    display: block;
-    margin-top: 14px;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    letter-spacing: 0.04em;
-    text-transform: uppercase;
-    color: var(--accent-warm);
-  }
-
-  .link-list{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 14px;
-    margin-top: 24px;
-  }
-  .link-pill{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    padding: 9px 16px;
-    border: 1px solid var(--line);
-    border-radius: 100px;
-    text-decoration: none;
-    color: var(--text);
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-  .link-pill:hover{
-    border-color: var(--accent-warm);
-    color: var(--accent-warm);
-  }
-
-  /* math section accents */
-  #math .section-mark{ color: var(--accent-cool); }
-  #math .card:hover{ border-color: var(--accent-cool); }
-
-  /* engineering section accents */
-  #engineering .section-mark{ color: var(--accent-ache); }
-  #engineering .card:hover{ border-color: var(--accent-ache); }
-  .cv-line{
-    display: flex;
-    justify-content: space-between;
-    gap: 16px;
-    padding: 14px 0;
-    border-bottom: 1px solid var(--line);
-    font-size: 16px;
-  }
-  .cv-line:last-child{ border-bottom: none; }
-  .cv-role{ color: var(--text); }
-  .cv-meta{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-dim);
-    white-space: nowrap;
-  }
-
-  /* in-between: mixed grid */
-  #between .card-row{
-    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
-  }
-
-  /* ---------- archive ---------- */
-  #archive .section-mark{ color: var(--accent-warm); }
-  .archive-search{
-    width: 100%;
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    padding: 12px 16px;
-    color: var(--text);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    margin-bottom: 20px;
-  }
-  .archive-search::placeholder{ color: var(--text-dim); }
-  .chip-row{
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 14px;
-  }
-  .chip{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    padding: 7px 14px;
-    border-radius: 100px;
-    border: 1px solid var(--line);
-    background: transparent;
-    color: var(--text-dim);
-    cursor: pointer;
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-  .chip.active{ border-color: var(--accent-warm); color: var(--accent-warm); }
-  .archive-count{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-dim);
-    margin: 10px 0 24px;
-  }
-  .entry{ border-bottom: 1px solid var(--line); padding: 20px 0; }
-  .entry:first-child{ padding-top: 0; }
-  .entry summary{
-    cursor: pointer;
-    list-style: none;
-    display: flex;
-    flex-wrap: wrap;
-    align-items: baseline;
-    gap: 12px;
-  }
-  .entry summary::-webkit-details-marker{ display: none; }
-  .entry summary::before{
-    content: '+ ';
-    color: var(--accent-warm);
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .entry[open] summary::before{ content: '\2212 '; }
-  .entry-title{ font-family: 'Fraunces', serif; font-weight: 500; font-size: 19px; }
-  .entry-meta{ font-family: 'JetBrains Mono', monospace; font-size: 12px; color: var(--text-dim); }
-  .entry-type{ text-transform: uppercase; letter-spacing: 0.05em; }
-  .entry-type.poem{ color: var(--accent-ache); }
-  .entry-type.essay{ color: var(--accent-warm); }
-  .entry-type.note{ color: var(--accent-cool); }
-  .entry-body{
-    margin: 16px 0 0;
-    font-size: 16px;
-    line-height: 1.75;
-    color: var(--text);
-    white-space: pre-line;
-  }
-  .entry-body.is-poem{
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 19px;
-    border-left: 2px solid var(--accent-ache);
-    padding-left: 22px;
-  }
-  .entry-tags{ margin-top: 14px; }
-  .entry-tag{ font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--text-dim); margin-right: 12px; }
-  .no-results{ color: var(--text-dim); font-family: 'JetBrains Mono', monospace; font-size: 14px; }
-
-  /* ---------- artwork carousel ---------- */
-  #art .section-mark{ color: var(--accent-cool); }
-  .carousel{ position: relative; }
-  .carousel-track{
-    display: flex;
-    gap: 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    padding-bottom: 14px;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: thin;
-    scrollbar-color: var(--accent-warm) transparent;
-  }
-  .carousel-track::-webkit-scrollbar{ height: 6px; }
-  .carousel-track::-webkit-scrollbar-thumb{ background: var(--line); border-radius: 4px; }
-  .carousel-slide{
-    flex: 0 0 auto;
-    width: min(420px, 78vw);
-    scroll-snap-align: center;
-  }
-  .art-frame{
-    aspect-ratio: 4 / 3;
-    background: var(--bg-panel);
-    border: 1px solid var(--line);
-    border-radius: 6px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .art-frame img{ width: 100%; height: 100%; object-fit: cover; display: block; }
-  .art-placeholder{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-dim);
-    text-align: center;
-    padding: 20px;
-  }
-  .art-title{
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 17px;
-    margin: 14px 0 4px;
-  }
-  .art-caption{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 12px;
-    color: var(--text-dim);
-  }
-  .carousel-controls{
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    margin-top: 20px;
-  }
-  .carousel-btn{
-    background: transparent;
-    border: 1px solid var(--line);
-    color: var(--text);
-    width: 38px;
-    height: 38px;
-    border-radius: 50%;
-    cursor: pointer;
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 16px;
-    transition: border-color 0.2s ease, color 0.2s ease;
-  }
-  .carousel-btn:hover{ border-color: var(--accent-warm); color: var(--accent-warm); }
-  .carousel-dots{ display: flex; gap: 8px; margin-left: 6px; align-items: center; }
-  .dot{
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
-    background: var(--line);
-    cursor: pointer;
-    border: none;
-    padding: 0;
-  }
-  .dot.active{ background: var(--accent-warm); }
-
-  /* ---------- mobile ---------- */
-  @media (max-width: 640px){
-    body{ font-size: 17px; }
-    .wrap{ padding: 0 20px; }
-    section{ padding: 56px 0; }
-    header.hero{ min-height: 70vh; padding: 30px 0 36px; }
-    .hero-sub{ font-size: 18px; }
-    .card{ padding: 20px 22px; }
-    .cv-line{ flex-direction: column; align-items: flex-start; gap: 4px; }
-    .archive-search{ font-size: 16px; }
-    .entry summary{ gap: 8px 12px; }
-    .carousel-slide{ width: 82vw; }
-    footer{ padding: 50px 0 40px; }
-  }
-  footer{
-    padding: 70px 0 60px;
-    border-top: 1px solid var(--line);
-    position: relative;
-    z-index: 1;
-  }
-  footer .foot-line{
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 13px;
-    color: var(--text-dim);
-  }
-  footer .foot-title{
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 26px;
-    margin: 0 0 18px;
-  }
-
-  @media (min-width: 620px){
-    .card-row.two-col{ grid-template-columns: 1fr 1fr; }
-  }
-</style>
+<link rel="stylesheet" href="/src/styles/site.css" />
 </head>
 <body>
 
+<SideClock />
+
 <div class="wrap">
-
-  <header class="hero">
-    <p class="eyebrow">a personal atlas / est. 2026</p>
-    <h1 class="title">slipping time<br><em>noodles.</em></h1>
-    <p class="hero-sub">A life doesn't sort itself into folders. Mine loops &mdash; a proof <span class="ache">aches</span> like a poem, a poem behaves like an engineering problem, and Tuesday keeps looping back through 1998. This is where the noodle goes when it slips.</p>
-    <span class="scroll-cue"><span class="bounce">&darr;</span> keep pulling the thread</span>
-  </header>
-
-  <section id="writing">
-    <div class="section-head">
-      <span class="section-mark">01 &mdash; not a sequence, just a number</span>
-      <h2>Writing</h2>
-    </div>
-    <p class="section-desc">Poems, essays, and the feminist pieces that wouldn't stay quiet. Some of it signs its real name. Some of it hides as Knightess.</p>
-
-    <p class="poem">
-      <span>[ a placeholder verse &mdash; swap this for a real fragment ]</span>
-      <span>the noodle does not know it is a noodle</span>
-      <span>it only knows it is slipping, and calls that living</span>
-    </p>
-    <p class="placeholder-note">&uarr; drop in three lines of your own here. this is a stand-in, not your voice.</p>
-
-    <div class="link-list">
-      <a class="link-pill" href="#">Medium &mdash; under my own name</a>
-      <a class="link-pill" href="#">Medium &mdash; as Knightess</a>
-      <a class="link-pill" href="#">Tumblr &mdash; bhasad</a>
-      <a class="link-pill" href="#archive">&darr; the full archive</a>
-    </div>
-  </section>
-
-  <section id="portraits">
-    <div class="section-head">
-      <span class="section-mark">02 &mdash; people, not labels</span>
-      <h2>Portraits of People</h2>
-    </div>
-    <p class="section-desc">A place to keep written portraits of the people in my life, without names or judgments. I want to notice how I remember them, what was actually interesting, and what was only a passing observation.</p>
-
-    <div class="portrait-list">
-      <article class="portrait">
-        <p>A person who moves through a room as though they are listening for the shape of it before they enter it. They are graceful without trying to be, and their attention lands on a person as if it has already decided to stay.</p>
-        <span class="portrait-note">portrait draft</span>
-      </article>
-      <article class="portrait">
-        <p>Someone whose warmth is easy to mistake for certainty, though it is really a soft kind of courage. They make conversation feel larger than it is, and leave behind a sense that other people are allowed to be vivid too.</p>
-        <span class="portrait-note">portrait draft</span>
-      </article>
-      <article class="portrait">
-        <p>A quick observation that lingered longer than it should have: the kind of person who keeps their feeling hidden in the posture of the body, in the pause before speaking, in the way they notice everything and call it ordinary.</p>
-        <span class="portrait-note">portrait draft</span>
-      </article>
-    </div>
-  </section>
-
-  <section id="archive">
-    <div class="section-head">
-      <span class="section-mark">&sect; &mdash; the whole pile, searchable</span>
-      <h2>Archive</h2>
-    </div>
-    <p class="section-desc">Every poem, essay, and stray note, hosted here in full &mdash; filter by kind or thread, or just search for the word you half-remember.</p>
-
-    <input type="text" class="archive-search" id="archiveSearch" placeholder="search titles, tags, or text&hellip;" aria-label="Search archive">
-    <div class="chip-row" id="typeChips" role="group" aria-label="Filter by type"></div>
-    <div class="chip-row" id="tagChips" role="group" aria-label="Filter by tag"></div>
-    <p class="archive-count" id="archiveCount"></p>
-    <div id="entryList"></div>
-  </section>
-
-  <section id="math">
-    <div class="section-head">
-      <span class="section-mark">&infin; &mdash; math &amp; other curiosities</span>
-      <h2>Math &amp; Curiosities</h2>
-    </div>
-    <p class="section-desc">Half-finished proofs, things I find beautiful, and the slow work of a mathematician-in-training. Not a lecture. A sketchbook.</p>
-
-    <div class="card-row two-col">
-      <Card>
-        <h3>Mathematics for Poets</h3>
-        <p>A big mathematical idea, opened with a poem that already knew it. Quarterly, unhurried, in progress.</p>
-        <span class="tag">ongoing &mdash; current focus</span>
-      </Card>
-      <Card>
-        <h3>Reading log</h3>
-        <p>Notes from Wolf's <em>Proof, Logic, and Conjecture</em>, and whatever comes after it, in the years before Hagen.</p>
-        <span class="tag">rebuilding &mdash; 2026&ndash;2029</span>
-      </Card>
-    </div>
-  </section>
-
-  <section id="engineering">
-    <div class="section-head">
-      <span class="section-mark">02 &mdash; curiosity, credentialed</span>
-      <h2>Engineering</h2>
-    </div>
-    <p class="section-desc">The part of the site that looks the most like a CV, framed the way it actually feels: as curiosity that happens to pay rent.</p>
-
-    <div class="card">
-      <div class="cv-line">
-        <span class="cv-role">SDET &mdash; Orbem, Munich</span>
-        <span class="cv-meta">2025 &ndash; present</span>
-      </div>
-      <div class="cv-line">
-        <span class="cv-role">Testing infrastructure for research &amp; ML systems, MRI-adjacent</span>
-        <span class="cv-meta">ongoing</span>
-      </div>
-      <div class="cv-line">
-        <span class="cv-role">Currently deepening AI / CS engineering skills</span>
-        <span class="cv-meta">current focus</span>
-      </div>
-    </div>
-  </section>
-
-  <section id="between">
-    <div class="section-head">
-      <span class="section-mark">&mdash; &mdash; everything in between</span>
-      <h2>In Between</h2>
-    </div>
-    <p class="section-desc">No folder for these. That's the point.</p>
-
-    <div class="card-row">
-      <Card><h3>Astrophotography</h3><p>A rig, a budget, and a lot of patient waiting for clear sky.</p></Card>
-      <Card><h3>Lindy hop</h3><p>Boogie B&auml;ren, still on Level 1, still delighted by it.</p></Card>
-      <Card><h3>German, A1.2</h3><p>The current gate to almost everything else on this list.</p></Card>
-      <Card><h3>Puzzles &amp; folklore</h3><p>Jigsaw pieces, selkies, and the odd corner of mythology.</p></Card>
-    </div>
-  </section>
-
-  <section id="art">
-    <div class="section-head">
-      <span class="section-mark">&sect; &mdash; the visual pile</span>
-      <h2>Artwork</h2>
-    </div>
-    <p class="section-desc">Sketches, photos, whatever gets made with hands instead of words. Swipe or use the arrows.</p>
-
-    <div class="carousel">
-      <div class="carousel-track" id="artTrack"></div>
-      <div class="carousel-controls">
-        <button class="carousel-btn" id="artPrev" type="button" aria-label="Previous artwork">&larr;</button>
-        <button class="carousel-btn" id="artNext" type="button" aria-label="Next artwork">&rarr;</button>
-        <div class="carousel-dots" id="artDots"></div>
-      </div>
-    </div>
-  </section>
-
+  <Hero />
+  <WritingSection />
+  <PortraitsSection />
+  <ArchiveSection />
+  <MathSection />
+  <EngineeringSection />
+  <BetweenSection />
+  <ArtworkSection />
   <Footer />
-
 </div>
 
 <script>
-  /* ============================================================
-     ARCHIVE DATA
-     To add a new piece: copy one object below and edit it.
-     type:     'poem' | 'essay' | 'note'
-     identity: 'self' | 'knightess'
-     tags:     lowercase, no # needed
-     body:     use \n for line breaks (poems render literally)
-     ============================================================ */
+  (function init500DayClock(){
+    var cycleMs = 500 * 24 * 60 * 60 * 1000;
+    var stateKey = 'slipping-time-noodles-last-cycle';
+    var emailAddress = 'hello@slippingtimenoodles.com';
+    var hourEl = document.getElementById('sideClockHour');
+    var minuteEl = document.getElementById('sideClockMinute');
+    var statusEl = document.getElementById('sideClockStatus');
+    var faceEl = document.getElementById('sideClockFace');
+    if (!hourEl || !minuteEl || !statusEl || !faceEl) return;
+
+    var now = Date.now();
+    var saved = Number(localStorage.getItem(stateKey) || 0);
+    var lastCycleStart = saved && saved > 0 ? saved : now;
+
+    if (!saved || saved <= 0){
+      localStorage.setItem(stateKey, String(lastCycleStart));
+    }
+
+    function composeMailto(){
+      var subject = encodeURIComponent('500 days complete — congratulations');
+      var body = encodeURIComponent(
+        'Congratulations on finishing another 500 days on this spinning planet whose speed I can not feel.\n\nI hope this next orbit feels a little more alive, a little more honest, and a little less like a loop.\n\n— the time noodle'
+      );
+      return 'mailto:' + emailAddress + '?subject=' + subject + '&body=' + body;
+    }
+
+    function buildFaceMarks(){
+      for (var i = 0; i < 12; i += 1){
+        var mark = document.createElement('span');
+        mark.className = 'face-mark' + (i % 3 === 0 ? ' major' : '');
+        var angle = (i / 12) * 360 - 90;
+        mark.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg)';
+        faceEl.appendChild(mark);
+      }
+    }
+
+    function updateClock(){
+      var elapsed = Date.now() - lastCycleStart;
+      var remaining = Math.max(0, cycleMs - elapsed);
+      var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
+      var angle = progress * 360;
+
+      hourEl.style.transform = 'translateX(-50%) rotate(' + angle + 'deg)';
+      minuteEl.style.transform = 'translateX(-50%) rotate(' + (angle * 2) + 'deg)';
+
+      if (remaining <= 0){
+        statusEl.textContent = '500 complete';
+        var mailto = composeMailto();
+        var hasSent = localStorage.getItem('slipping-time-noodles-email-sent') === String(lastCycleStart);
+        if (!hasSent){
+          localStorage.setItem('slipping-time-noodles-email-sent', String(lastCycleStart));
+          window.location.href = mailto;
+        }
+        lastCycleStart = Date.now();
+        localStorage.setItem(stateKey, String(lastCycleStart));
+        localStorage.removeItem('slipping-time-noodles-email-sent');
+        return;
+      }
+
+      var daysLeft = Math.ceil(remaining / (24 * 60 * 60 * 1000));
+      statusEl.textContent = daysLeft === 1 ? '1 day left' : daysLeft + ' days left';
+    }
+
+    buildFaceMarks();
+    updateClock();
+    setInterval(updateClock, 1000 * 60);
+  })();
+
   var ENTRIES = [
     {
       id: 'e1', title: '[placeholder] on forgetting slowly', type: 'poem', identity: 'self',
@@ -770,14 +245,7 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 
     render();
   })();
-</script>
 
-<script>
-  /* ============================================================
-     ARTWORK DATA
-     To add a piece: copy one object, set src to your image URL
-     (or leave src empty to show a placeholder frame).
-     ============================================================ */
   var ART = artwork;
 
   (function initCarousel(){
