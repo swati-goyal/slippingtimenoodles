@@ -1,3 +1,7 @@
 [build]
   command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  PUBLIC_SANITY_PROJECT_ID = "q6yoxur5"
+  PUBLIC_SANITY_DATASET = "production"
