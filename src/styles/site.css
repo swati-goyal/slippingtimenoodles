@@ -44,9 +44,8 @@
   /* ---------- side clock ---------- */
   .side-clock{
     position: fixed;
-    left: 18px;
-    top: 50%;
-    transform: translateY(-50%);
+    right: 18px;
+    top: 18px;
     width: 170px;
     padding: 16px 12px 14px;
     background: rgba(46, 33, 64, 0.82);
@@ -136,7 +135,7 @@
     text-transform: lowercase;
   }
   @media (max-width: 900px){
-    .side-clock{ left: auto; right: 18px; top: 18px; transform: none; width: 148px; }
+    .side-clock{ width: 148px; }
     .side-clock .clock-face{ width: 100px; height: 100px; }
   }
   @media (max-width: 640px){
