@@ -87,8 +87,8 @@
     width: 2px;
     height: 8px;
     background: rgba(242,233,220,0.55);
-    transform-origin: center calc(100% + 42px);
     border-radius: 2px;
+    transform-origin: center center;
     margin-left: -1px;
     margin-top: -1px;
   }
@@ -99,10 +99,10 @@
   .side-clock .hand{
     position: absolute;
     left: 50%;
-    bottom: 50%;
+    top: 50%;
     transform-origin: center bottom;
     border-radius: 999px;
-    transform: translateX(-50%) rotate(0deg);
+    transform: translate(-50%, -100%) rotate(0deg);
   }
   .side-clock .hand.hour{
     width: 3px;
