@@ -1,24 +1,23 @@
 ---
 import Card from '../Card.astro';
+
+const { mark = '∞ — math & other curiosities', title = 'Math & Curiosities', intro = '', cards = [] } = Astro.props;
 ---
 
 <section id="math">
   <div class="section-head">
-    <span class="section-mark">&infin; &mdash; math &amp; other curiosities</span>
-    <h2>Math &amp; Curiosities</h2>
+    <span class="section-mark">{mark}</span>
+    <h2>{title}</h2>
   </div>
-  <p class="section-desc">Half-finished proofs, things I find beautiful, and the slow work of a mathematician-in-training. Not a lecture. A sketchbook.</p>
+  <p class="section-desc">{intro}</p>
 
   <div class="card-row two-col">
-    <Card>
-      <h3>Mathematics for Poets</h3>
-      <p>A big mathematical idea, opened with a poem that already knew it. Quarterly, unhurried, in progress.</p>
-      <span class="tag">ongoing &mdash; current focus</span>
-    </Card>
-    <Card>
-      <h3>Reading log</h3>
-      <p>Notes from Wolf's <em>Proof, Logic, and Conjecture</em>, and whatever comes after it, in the years before Hagen.</p>
-      <span class="tag">rebuilding &mdash; 2026&ndash;2029</span>
-    </Card>
+    {cards.map((card) => (
+      <Card>
+        <h3>{card.title}</h3>
+        <p>{card.body}</p>
+        <span class="tag">{card.tag}</span>
+      </Card>
+    ))}
   </div>
 </section>

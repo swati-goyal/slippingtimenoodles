@@ -1,22 +1,20 @@
+---
+const { mark = '02 — people, not labels', title = 'Portraits of People', intro = '', portraits = [] } = Astro.props;
+---
+
 <section id="portraits">
   <div class="section-head">
-    <span class="section-mark">02 &mdash; people, not labels</span>
-    <h2>Portraits of People</h2>
+    <span class="section-mark">{mark}</span>
+    <h2>{title}</h2>
   </div>
-  <p class="section-desc">A place to keep written portraits of the people in my life, without names or judgments. I want to notice how I remember them, what was actually interesting, and what was only a passing observation.</p>
+  <p class="section-desc">{intro}</p>
 
   <div class="portrait-list">
-    <article class="portrait">
-      <p>A person who moves through a room as though they are listening for the shape of it before they enter it. They are graceful without trying to be, and their attention lands on a person as if it has already decided to stay.</p>
-      <span class="portrait-note">portrait draft</span>
-    </article>
-    <article class="portrait">
-      <p>Someone whose warmth is easy to mistake for certainty, though it is really a soft kind of courage. They make conversation feel larger than it is, and leave behind a sense that other people are allowed to be vivid too.</p>
-      <span class="portrait-note">portrait draft</span>
-    </article>
-    <article class="portrait">
-      <p>A quick observation that lingered longer than it should have: the kind of person who keeps their feeling hidden in the posture of the body, in the pause before speaking, in the way they notice everything and call it ordinary.</p>
-      <span class="portrait-note">portrait draft</span>
-    </article>
+    {portraits.map((portrait) => (
+      <article class="portrait">
+        <p>{portrait.body}</p>
+        <span class="portrait-note">portrait draft</span>
+      </article>
+    ))}
   </div>
 </section>

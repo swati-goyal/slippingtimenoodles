@@ -1,22 +1,26 @@
+---
+const { mark = '02 — curiosity, credentialed', title = 'Engineering', intro = '', entries = [] } = Astro.props;
+---
+
 <section id="engineering">
   <div class="section-head">
-    <span class="section-mark">02 &mdash; curiosity, credentialed</span>
-    <h2>Engineering</h2>
+    <span class="section-mark">{mark}</span>
+    <h2>{title}</h2>
   </div>
-  <p class="section-desc">The part of the site that looks the most like a CV, framed the way it actually feels: as curiosity that happens to pay rent.</p>
+  <p class="section-desc">{intro}</p>
 
   <div class="card">
-    <div class="cv-line">
-      <span class="cv-role">SDET &mdash; Orbem, Munich</span>
-      <span class="cv-meta">2025 &ndash; present</span>
-    </div>
-    <div class="cv-line">
-      <span class="cv-role">Testing infrastructure for research &amp; ML systems, MRI-adjacent</span>
-      <span class="cv-meta">ongoing</span>
-    </div>
-    <div class="cv-line">
-      <span class="cv-role">Currently deepening AI / CS engineering skills</span>
-      <span class="cv-meta">current focus</span>
-    </div>
+    {entries.map((entry) => (
+      <>
+        <div class="cv-line">
+          <span class="cv-role">{entry.role}</span>
+          <span class="cv-meta">{entry.period}</span>
+        </div>
+        <div class="cv-line">
+          <span class="cv-role">{entry.detail}</span>
+          <span class="cv-meta">detail</span>
+        </div>
+      </>
+    ))}
   </div>
 </section>

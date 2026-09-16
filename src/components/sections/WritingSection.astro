@@ -1,21 +1,22 @@
+---
+const { mark = '01 — not a sequence, just a number', title = 'Writing', intro = '', quoteLines = [], placeholderNote = '', links = [] } = Astro.props;
+---
+
 <section id="writing">
   <div class="section-head">
-    <span class="section-mark">01 &mdash; not a sequence, just a number</span>
-    <h2>Writing</h2>
+    <span class="section-mark">{mark}</span>
+    <h2>{title}</h2>
   </div>
-  <p class="section-desc">Poems, essays, and the feminist pieces that wouldn't stay quiet. Some of it signs its real name. Some of it hides as Knightess.</p>
+  <p class="section-desc">{intro}</p>
 
   <p class="poem">
-    <span>[ a placeholder verse &mdash; swap this for a real fragment ]</span>
-    <span>the noodle does not know it is a noodle</span>
-    <span>it only knows it is slipping, and calls that living</span>
+    {quoteLines.length ? quoteLines.map((line) => <span>{line}</span>) : null}
   </p>
-  <p class="placeholder-note">&uarr; drop in three lines of your own here. this is a stand-in, not your voice.</p>
+  <p class="placeholder-note">&uarr; {placeholderNote}</p>
 
   <div class="link-list">
-    <a class="link-pill" href="#">Medium &mdash; under my own name</a>
-    <a class="link-pill" href="#">Medium &mdash; as Knightess</a>
-    <a class="link-pill" href="#">Tumblr &mdash; bhasad</a>
-    <a class="link-pill" href="#archive">&darr; the full archive</a>
+    {links.map((link) => (
+      <a class="link-pill" href={link.href || '#'}>{link.label}</a>
+    ))}
   </div>
 </section>

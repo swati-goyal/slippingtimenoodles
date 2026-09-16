@@ -1,4 +1,8 @@
+---
+const { title = 'say hello, or don’t — the noodle keeps slipping either way.', line = 'slippingtimenoodles.com · built to loop, not to finish' } = Astro.props;
+---
+
 <footer>
-  <p class="foot-title">say hello, or don't &mdash; the noodle keeps slipping either way.</p>
-  <p class="foot-line">slippingtimenoodles.com &middot; built to loop, not to finish</p>
+  <p class="foot-title">{title}</p>
+  <p class="foot-line">{line}</p>
 </footer>

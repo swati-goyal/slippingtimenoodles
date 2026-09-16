@@ -11,7 +11,100 @@ import MathSection from '../components/sections/MathSection.astro';
 import EngineeringSection from '../components/sections/EngineeringSection.astro';
 import BetweenSection from '../components/sections/BetweenSection.astro';
 import ArtworkSection from '../components/sections/ArtworkSection.astro';
-import { getArtwork } from '../lib/sanity';
+import { getArchiveEntries, getArtwork, getHomePage } from '../lib/sanity';
+
+const defaultHomePage = {
+  eyebrow: 'a personal atlas / est. 2026',
+  heroTitleLineOne: 'slipping time',
+  heroTitleLineTwo: 'noodles.',
+  heroSubtitle:
+    "A life doesn't sort itself into folders. Mine loops — a proof aches like a poem, a poem behaves like an engineering problem, and Tuesday keeps looping back through 1998. This is where the noodle goes when it slips.",
+  scrollCue: 'keep pulling the thread',
+  writingTitle: 'Writing',
+  writingMark: '01 — not a sequence, just a number',
+  writingIntro:
+    "Poems, essays, and the feminist pieces that wouldn't stay quiet. Some of it signs its real name. Some of it hides as Knightess.",
+  writingQuote: [
+    '[ a placeholder verse — swap this for a real fragment ]',
+    'the noodle does not know it is a noodle',
+    'it only knows it is slipping, and calls that living',
+  ],
+  writingPlaceholderNote: 'drop in three lines of your own here. this is a stand-in, not your voice.',
+  writingLinks: [
+    { label: 'Medium — under my own name', href: '#' },
+    { label: 'Medium — as Knightess', href: '#' },
+    { label: 'Tumblr — bhasad', href: '#' },
+    { label: 'the full archive', href: '#archive' },
+  ],
+  portraitTitle: 'Portraits of People',
+  portraitMark: '02 — people, not labels',
+  portraitIntro:
+    'A place to keep written portraits of the people in my life, without names or judgments. I want to notice how I remember them, what was actually interesting, and what was only a passing observation.',
+  portraits: [
+    {
+      body:
+        'A person who moves through a room as though they are listening for the shape of it before they enter it. They are graceful without trying to be, and their attention lands on a person as if it has already decided to stay.',
+    },
+    {
+      body:
+        'Someone whose warmth is easy to mistake for certainty, though it is really a soft kind of courage. They make conversation feel larger than it is, and leave behind a sense that other people are allowed to be vivid too.',
+    },
+    {
+      body:
+        'A quick observation that lingered longer than it should have: the kind of person who keeps their feeling hidden in the posture of the body, in the pause before speaking, in the way they notice everything and call it ordinary.',
+    },
+  ],
+  archiveTitle: 'Archive',
+  archiveMark: '§ — the whole pile, searchable',
+  archiveIntro:
+    'Every poem, essay, and stray note, hosted here in full — filter by kind or thread, or just search for the word you half-remember.',
+  mathTitle: 'Math & Curiosities',
+  mathMark: '∞ — math & other curiosities',
+  mathIntro:
+    'Half-finished proofs, things I find beautiful, and the slow work of a mathematician-in-training. Not a lecture. A sketchbook.',
+  mathCards: [
+    {
+      title: 'Mathematics for Poets',
+      body: 'A big mathematical idea, opened with a poem that already knew it. Quarterly, unhurried, in progress.',
+      tag: 'ongoing — current focus',
+    },
+    {
+      title: 'Reading log',
+      body: "Notes from Wolf's Proof, Logic, and Conjecture, and whatever comes after it, in the years before Hagen.",
+      tag: 'rebuilding — 2026–2029',
+    },
+  ],
+  engineeringTitle: 'Engineering',
+  engineeringMark: '02 — curiosity, credentialed',
+  engineeringIntro:
+    'The part of the site that looks the most like a CV, framed the way it actually feels: as curiosity that happens to pay rent.',
+  engineeringEntries: [
+    {
+      role: 'SDET — Orbem, Munich',
+      period: '2025 – present',
+      detail: 'Testing infrastructure for research & ML systems, MRI-adjacent',
+    },
+    {
+      role: 'Currently deepening AI / CS engineering skills',
+      period: 'current focus',
+      detail: 'Testing infrastructure for research & ML systems, MRI-adjacent',
+    },
+  ],
+  betweenTitle: 'In Between',
+  betweenMark: '— — everything in between',
+  betweenIntro: "No folder for these. That's the point.",
+  betweenCards: [
+    { title: 'Astrophotography', body: 'A rig, a budget, and a lot of patient waiting for clear sky.' },
+    { title: 'Lindy hop', body: 'Boogie Bären, still on Level 1, still delighted by it.' },
+    { title: 'German, A1.2', body: 'The current gate to almost everything else on this list.' },
+    { title: 'Puzzles & folklore', body: 'Jigsaw pieces, selkies, and the odd corner of mythology.' },
+  ],
+  footerTitle: 'say hello, or don’t — the noodle keeps slipping either way.',
+  footerLine: 'slippingtimenoodles.com · built to loop, not to finish',
+};
+
+const homePage = await getHomePage() ?? defaultHomePage;
+const archiveEntries = await getArchiveEntries();
 
 const cmsArtwork = await getArtwork();
 const artwork = cmsArtwork.length ? cmsArtwork : [
@@ -35,18 +128,55 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 <SideClock />
 
 <div class="wrap">
-  <Hero />
-  <WritingSection />
-  <PortraitsSection />
-  <ArchiveSection />
-  <MathSection />
-  <EngineeringSection />
-  <BetweenSection />
+  <Hero
+    eyebrow={homePage.eyebrow}
+    heroTitleLineOne={homePage.heroTitleLineOne}
+    heroTitleLineTwo={homePage.heroTitleLineTwo}
+    heroSubtitle={homePage.heroSubtitle}
+    scrollCue={homePage.scrollCue}
+  />
+  <WritingSection
+    mark={homePage.writingMark}
+    title={homePage.writingTitle}
+    intro={homePage.writingIntro}
+    quoteLines={homePage.writingQuote || defaultHomePage.writingQuote}
+    placeholderNote={homePage.writingPlaceholderNote || defaultHomePage.writingPlaceholderNote}
+    links={homePage.writingLinks || defaultHomePage.writingLinks}
+  />
+  <PortraitsSection
+    mark={homePage.portraitMark}
+    title={homePage.portraitTitle}
+    intro={homePage.portraitIntro}
+    portraits={homePage.portraits || defaultHomePage.portraits}
+  />
+  <ArchiveSection
+    mark={homePage.archiveMark}
+    title={homePage.archiveTitle}
+    intro={homePage.archiveIntro}
+  />
+  <MathSection
+    mark={homePage.mathMark}
+    title={homePage.mathTitle}
+    intro={homePage.mathIntro}
+    cards={homePage.mathCards || defaultHomePage.mathCards}
+  />
+  <EngineeringSection
+    mark={homePage.engineeringMark}
+    title={homePage.engineeringTitle}
+    intro={homePage.engineeringIntro}
+    entries={homePage.engineeringEntries || defaultHomePage.engineeringEntries}
+  />
+  <BetweenSection
+    mark={homePage.betweenMark}
+    title={homePage.betweenTitle}
+    intro={homePage.betweenIntro}
+    cards={homePage.betweenCards || defaultHomePage.betweenCards}
+  />
   <ArtworkSection />
-  <Footer />
+  <Footer title={homePage.footerTitle || defaultHomePage.footerTitle} line={homePage.footerLine || defaultHomePage.footerLine} />
 </div>
 
-<script>
+<script define:vars={{ archiveEntries }}>
   (function init500DayClock(){
     var cycleMs = 500 * 24 * 60 * 60 * 1000;
     var stateKey = 'slipping-time-noodles-last-cycle';
@@ -115,7 +245,7 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     setInterval(updateClock, 1000 * 60);
   })();
 
-  var ENTRIES = [
+  var ENTRIES = archiveEntries && archiveEntries.length ? archiveEntries : [
     {
       id: 'e1', title: '[placeholder] on forgetting slowly', type: 'poem', identity: 'self',
       date: '2026', tags: ['love', 'distance'],

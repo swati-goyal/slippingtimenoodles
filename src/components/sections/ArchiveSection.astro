@@ -1,9 +1,13 @@
+---
+const { mark = '§ — the whole pile, searchable', title = 'Archive', intro = 'Every poem, essay, and stray note, hosted here in full — filter by kind or thread, or just search for the word you half-remember.' } = Astro.props;
+---
+
 <section id="archive">
   <div class="section-head">
-    <span class="section-mark">&sect; &mdash; the whole pile, searchable</span>
-    <h2>Archive</h2>
+    <span class="section-mark">{mark}</span>
+    <h2>{title}</h2>
   </div>
-  <p class="section-desc">Every poem, essay, and stray note, hosted here in full &mdash; filter by kind or thread, or just search for the word you half-remember.</p>
+  <p class="section-desc">{intro}</p>
 
   <input type="text" class="archive-search" id="archiveSearch" placeholder="search titles, tags, or text&hellip;" aria-label="Search archive">
   <div class="chip-row" id="typeChips" role="group" aria-label="Filter by type"></div>
