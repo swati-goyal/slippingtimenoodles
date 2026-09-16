@@ -1,7 +1,6 @@
 ---
 import Card from '../components/Card.astro';
 import Footer from '../components/Footer.astro';
-import NoodleThread from '../components/NoodleThread.astro';
 import Section from '../components/Section.astro';
 import { getArtwork } from '../lib/sanity';
 
@@ -63,34 +62,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     margin: 0 auto;
     padding: 0 28px;
     position: relative;
-  }
-
-  /* ---------- noodle thread ---------- */
-  .noodle-svg{
-    position: absolute;
-    top: 0;
-    left: -40px;
-    width: 90px;
-    height: 100%;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .noodle-path{
-    fill: none;
-    stroke: var(--accent-warm);
-    stroke-width: 9;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    opacity: 0.6;
-    filter: drop-shadow(0 0 6px rgba(232,163,61,0.25));
-    stroke-dasharray: 3000;
-    stroke-dashoffset: 3000;
-    transition: stroke-dashoffset 0.1s linear;
-    vector-effect: non-scaling-stroke;
-  }
-  @media (max-width: 720px){
-    .noodle-svg{ left: -8px; width: 40px; }
-    .noodle-path{ stroke-width: 6; }
   }
 
   /* ---------- hero ---------- */
@@ -236,6 +207,32 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     font-size: 12px;
     color: var(--text-dim);
     opacity: 0.7;
+  }
+
+  .portrait-list{
+    display: grid;
+    gap: 18px;
+  }
+  .portrait{
+    background: var(--bg-panel);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 24px 26px;
+  }
+  .portrait p{
+    margin: 0;
+    color: var(--text);
+    font-size: 18px;
+    line-height: 1.7;
+  }
+  .portrait-note{
+    display: block;
+    margin-top: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--accent-warm);
   }
 
   .link-list{
@@ -461,10 +458,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     .carousel-slide{ width: 82vw; }
     footer{ padding: 50px 0 40px; }
   }
-  @media (max-width: 420px){
-    .noodle-svg{ display: none; }
-  }
-
   footer{
     padding: 70px 0 60px;
     border-top: 1px solid var(--line);
@@ -489,20 +482,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 </style>
 </head>
 <body>
-
-<svg class="noodle-svg" id="noodleSvg" viewBox="0 0 90 3400" preserveAspectRatio="none" aria-hidden="true">
-  <path class="noodle-path" id="noodlePath" d="M45,0
-    C10,120 80,220 45,340
-    S10,560 45,680
-    S80,900 45,1020
-    S10,1240 45,1360
-    S80,1580 45,1700
-    S10,1920 45,2040
-    S80,2260 45,2380
-    S10,2600 45,2720
-    S80,2940 45,3060
-    S10,3280 45,3400" />
-</svg>
 
 <div class="wrap">
 
@@ -532,6 +511,29 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       <a class="link-pill" href="#">Medium &mdash; as Knightess</a>
       <a class="link-pill" href="#">Tumblr &mdash; bhasad</a>
       <a class="link-pill" href="#archive">&darr; the full archive</a>
+    </div>
+  </section>
+
+  <section id="portraits">
+    <div class="section-head">
+      <span class="section-mark">02 &mdash; people, not labels</span>
+      <h2>Portraits of People</h2>
+    </div>
+    <p class="section-desc">A place to keep written portraits of the people in my life, without names or judgments. I want to notice how I remember them, what was actually interesting, and what was only a passing observation.</p>
+
+    <div class="portrait-list">
+      <article class="portrait">
+        <p>A person who moves through a room as though they are listening for the shape of it before they enter it. They are graceful without trying to be, and their attention lands on a person as if it has already decided to stay.</p>
+        <span class="portrait-note">portrait draft</span>
+      </article>
+      <article class="portrait">
+        <p>Someone whose warmth is easy to mistake for certainty, though it is really a soft kind of courage. They make conversation feel larger than it is, and leave behind a sense that other people are allowed to be vivid too.</p>
+        <span class="portrait-note">portrait draft</span>
+      </article>
+      <article class="portrait">
+        <p>A quick observation that lingered longer than it should have: the kind of person who keeps their feeling hidden in the posture of the body, in the pause before speaking, in the way they notice everything and call it ordinary.</p>
+        <span class="portrait-note">portrait draft</span>
+      </article>
     </div>
   </section>
 
@@ -628,40 +630,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
   <Footer />
 
 </div>
-
-<script>
-  (function(){
-    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var path = document.getElementById('noodlePath');
-    var svg = document.getElementById('noodleSvg');
-    if (!path || !svg) return;
-
-    function setSvgHeight(){
-      var h = document.body.scrollHeight;
-      svg.setAttribute('viewBox', '0 0 90 ' + h);
-      svg.style.height = h + 'px';
-      // stretch the path's own coordinate system isn't trivial to rescale,
-      // so instead we scale via CSS height + preserveAspectRatio 'none'
-    }
-    setSvgHeight();
-    window.addEventListener('resize', setSvgHeight);
-
-    var length = path.getTotalLength();
-    path.style.strokeDasharray = length;
-    path.style.strokeDashoffset = reduce ? 0 : length;
-
-    function onScroll(){
-      if (reduce) return;
-      var scrollTop = window.scrollY;
-      var docHeight = document.body.scrollHeight - window.innerHeight;
-      var progress = docHeight > 0 ? Math.min(scrollTop / docHeight, 1) : 0;
-      var offset = length - (length * progress);
-      path.style.strokeDashoffset = offset;
-    }
-    document.addEventListener('scroll', onScroll, { passive: true });
-    onScroll();
-  })();
-</script>
 
 <script>
   /* ============================================================
