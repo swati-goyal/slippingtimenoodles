@@ -216,7 +216,7 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       var remaining = Math.max(0, cycleMs - elapsed);
       var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
       var angle = progress * 360;
-      yearEl.textContent = 'planetary year ' + String(cycleNumber + 1).padStart(2, '0');
+      yearEl.textContent = 'planetary year ' + String(cycleNumber + 26).padStart(2, '0');
 
       hourEl.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
       minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + (angle * 2) + 'deg)';
