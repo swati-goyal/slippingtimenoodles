@@ -183,18 +183,19 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     var earthHoursPerPlanetaryDay = 25;
     var planetaryDayMs = earthHoursPerPlanetaryDay * 60 * 60 * 1000;
     var cycleMs = planetaryYearDays * planetaryDayMs;
-    var birthdayDay = planetaryYearDays - 1;
-    // Day 1 sits where it must for day 479 to land on 2026-12-07, the 27th birthday.
-    var sharedStartMs = Date.parse('2025-07-27T02:00:00Z');
+    // The local year turns on day 479, two days before the cycle itself ends.
+    var markDay = planetaryYearDays - 1;
+    var sharedStartMs = Date.parse('1988-08-19T02:00:00Z');
     var sentCycleKey = 'slipping-time-noodles-email-sent-cycle';
     var emailAddress = 'hello@slippingtimenoodles.com';
     var celebratedCycle = null;
     var hourEl = document.getElementById('sideClockHour');
     var minuteEl = document.getElementById('sideClockMinute');
+    var timeEl = document.getElementById('sideClockTime');
     var yearEl = document.getElementById('sideClockYear');
     var statusEl = document.getElementById('sideClockStatus');
     var faceEl = document.getElementById('sideClockFace');
-    if (!hourEl || !minuteEl || !yearEl || !statusEl || !faceEl) return;
+    if (!hourEl || !minuteEl || !timeEl || !yearEl || !statusEl || !faceEl) return;
 
     function composeMailto(){
       var subject = encodeURIComponent(planetaryYearDays + ' days complete — congratulations');
@@ -223,10 +224,10 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     }
 
     function buildFaceMarks(){
-      for (var i = 0; i < 12; i += 1){
+      for (var i = 0; i < earthHoursPerPlanetaryDay; i += 1){
         var mark = document.createElement('span');
-        mark.className = 'face-mark' + (i % 3 === 0 ? ' major' : '');
-        var angle = (i / 12) * 360;
+        mark.className = 'face-mark' + (i % 5 === 0 ? ' major' : '');
+        var angle = (i / earthHoursPerPlanetaryDay) * 360;
         mark.style.transform = 'translate(-50%, -50%) rotate(' + angle + 'deg) translateY(-42px)';
         faceEl.appendChild(mark);
       }
@@ -237,13 +238,20 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       var cycleNumber = Math.max(0, Math.floor(elapsedSinceSharedStart / cycleMs));
       var lastCycleStart = sharedStartMs + cycleNumber * cycleMs;
       var elapsed = Date.now() - lastCycleStart;
-      var remaining = Math.max(0, cycleMs - elapsed);
-      var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
-      var angle = progress * 360;
-      yearEl.textContent = planetName + ' · year ' + String(cycleNumber + 26).padStart(2, '0');
+      var planetaryDay = Math.min(planetaryYearDays, Math.floor(elapsed / planetaryDayMs) + 1);
 
-      hourEl.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
-      minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + (angle * 2) + 'deg)';
+      yearEl.textContent = planetName + ' · year ' + (cycleNumber - 1 + (planetaryDay >= markDay ? 1 : 0));
+
+      // A local hour is one Earth hour, so a local day is 25 of them and the dial
+      // carries 25 marks. The hour hand turns once per local day, not twice.
+      var msIntoDay = elapsed % planetaryDayMs;
+      var msIntoHour = msIntoDay % 3600000;
+      var localHour = Math.floor(msIntoDay / 3600000);
+      var localMinute = Math.floor(msIntoHour / 60000);
+      timeEl.textContent = String(localHour).padStart(2, '0') + ':' + String(localMinute).padStart(2, '0');
+
+      hourEl.style.transform = 'translate(-50%, -100%) rotate(' + ((msIntoDay / planetaryDayMs) * 360) + 'deg)';
+      minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + ((msIntoHour / 3600000) * 360) + 'deg)';
 
       // The clock never rests at zero — it rolls straight into the next planetary year.
       // A completed cycle is therefore the first local day on the far side of that roll.
@@ -253,28 +261,16 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
         return;
       }
 
-      var planetaryDay = Math.min(planetaryYearDays, Math.floor(elapsed / planetaryDayMs) + 1);
-      var daysUntilBirthday = birthdayDay - planetaryDay;
+      // Day 480 sits past the mark, so it wraps to the mark in the next cycle.
+      var daysLeft = markDay - planetaryDay;
+      if (daysLeft < 0) daysLeft += planetaryYearDays;
 
-      if (daysUntilBirthday > 0){
-        statusEl.textContent = daysUntilBirthday === 1
-          ? '1 day until the birthday'
-          : daysUntilBirthday + ' days until the birthday';
-        return;
-      }
-
-      if (daysUntilBirthday === 0){
-        statusEl.textContent = 'the birthday — today';
-        return;
-      }
-
-      var daysLeft = Math.ceil(remaining / planetaryDayMs);
       statusEl.textContent = daysLeft === 1 ? '1 day left' : daysLeft + ' days left';
     }
 
     buildFaceMarks();
     updateClock();
-    setInterval(updateClock, 1000 * 60);
+    setInterval(updateClock, 1000);
   })();
 
   var ENTRIES = archiveEntries && archiveEntries.length ? archiveEntries : [
