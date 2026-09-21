@@ -177,27 +177,49 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 </div>
 
 <script define:vars={{ archiveEntries }}>
-  (function init500DayClock(){
-    var planetaryYearDays = 519;
-    var earthHoursPerPlanetaryDay = 27;
-    var cycleMs = planetaryYearDays * earthHoursPerPlanetaryDay * 60 * 60 * 1000;
-    var sharedStartMs = Date.parse('2026-09-19T00:00:00Z');
+  (function initPlanetaryClock(){
+    var planetName = 's7k2';
+    var planetaryYearDays = 480;
+    var earthHoursPerPlanetaryDay = 25;
+    var planetaryDayMs = earthHoursPerPlanetaryDay * 60 * 60 * 1000;
+    var cycleMs = planetaryYearDays * planetaryDayMs;
+    var birthdayDay = planetaryYearDays - 1;
+    // Day 1 sits where it must for day 479 to land on 2026-12-07, the 27th birthday.
+    var sharedStartMs = Date.parse('2025-07-27T02:00:00Z');
     var sentCycleKey = 'slipping-time-noodles-email-sent-cycle';
     var emailAddress = 'hello@slippingtimenoodles.com';
+    var celebratedCycle = null;
     var hourEl = document.getElementById('sideClockHour');
     var minuteEl = document.getElementById('sideClockMinute');
-    var dateEl = document.getElementById('sideClockDate');
     var yearEl = document.getElementById('sideClockYear');
     var statusEl = document.getElementById('sideClockStatus');
     var faceEl = document.getElementById('sideClockFace');
-    if (!hourEl || !minuteEl || !dateEl || !yearEl || !statusEl || !faceEl) return;
+    if (!hourEl || !minuteEl || !yearEl || !statusEl || !faceEl) return;
 
     function composeMailto(){
-      var subject = encodeURIComponent('500 days complete — congratulations');
+      var subject = encodeURIComponent(planetaryYearDays + ' days complete — congratulations');
       var body = encodeURIComponent(
-        'Congratulations on finishing another 500 days on this spinning planet whose speed I can not feel.\n\nI hope this next orbit feels a little more alive, a little more honest, and a little less like a loop.\n\n— the time noodle'
+        'Congratulations on finishing another ' + planetaryYearDays + ' days on this spinning planet whose speed I can not feel.\n\nI hope this next orbit feels a little more alive, a little more honest, and a little less like a loop.\n\n— the time noodle'
       );
       return 'mailto:' + emailAddress + '?subject=' + subject + '&body=' + body;
+    }
+
+    function readSentCycle(){
+      try { return localStorage.getItem(sentCycleKey); }
+      catch (err) { return null; }
+    }
+
+    function writeSentCycle(value){
+      try { localStorage.setItem(sentCycleKey, value); }
+      catch (err) { return; }
+    }
+
+    function celebrateCycle(cycleNumber){
+      var key = String(cycleNumber);
+      if (celebratedCycle === key || readSentCycle() === key) return;
+      celebratedCycle = key;
+      writeSentCycle(key);
+      window.location.href = composeMailto();
     }
 
     function buildFaceMarks(){
@@ -218,27 +240,35 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       var remaining = Math.max(0, cycleMs - elapsed);
       var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
       var angle = progress * 360;
-      var planetaryDay = Math.min(planetaryYearDays, Math.floor(elapsed / (earthHoursPerPlanetaryDay * 60 * 60 * 1000)) + 1);
-      var month = planetaryDay <= 315 ? Math.ceil(planetaryDay / 35) : 10 + Math.ceil((planetaryDay - 315) / 34);
-      var dayInMonth = planetaryDay <= 315 ? ((planetaryDay - 1) % 35) + 1 : ((planetaryDay - 316) % 34) + 1;
-      var daysLeft = Math.ceil(remaining / (earthHoursPerPlanetaryDay * 60 * 60 * 1000));
-      dateEl.textContent = 'day ' + String(planetaryDay).padStart(3, '0') + ' · month ' + String(month).padStart(2, '0') + ' · ' + daysLeft + ' left';
-      yearEl.textContent = 'planetary year ' + String(cycleNumber + 26).padStart(2, '0');
+      yearEl.textContent = planetName + ' · year ' + String(cycleNumber + 26).padStart(2, '0');
 
       hourEl.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
       minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + (angle * 2) + 'deg)';
 
-      if (remaining <= 0){
-        statusEl.textContent = '500 complete';
-        var mailto = composeMailto();
-        var hasSent = localStorage.getItem(sentCycleKey) === String(cycleNumber);
-        if (!hasSent){
-          localStorage.setItem(sentCycleKey, String(cycleNumber));
-          window.location.href = mailto;
-        }
+      // The clock never rests at zero — it rolls straight into the next planetary year.
+      // A completed cycle is therefore the first local day on the far side of that roll.
+      if (cycleNumber > 0 && elapsed < planetaryDayMs){
+        statusEl.textContent = planetaryYearDays + ' complete';
+        celebrateCycle(cycleNumber);
         return;
       }
 
+      var planetaryDay = Math.min(planetaryYearDays, Math.floor(elapsed / planetaryDayMs) + 1);
+      var daysUntilBirthday = birthdayDay - planetaryDay;
+
+      if (daysUntilBirthday > 0){
+        statusEl.textContent = daysUntilBirthday === 1
+          ? '1 day until the birthday'
+          : daysUntilBirthday + ' days until the birthday';
+        return;
+      }
+
+      if (daysUntilBirthday === 0){
+        statusEl.textContent = 'the birthday — today';
+        return;
+      }
+
+      var daysLeft = Math.ceil(remaining / planetaryDayMs);
       statusEl.textContent = daysLeft === 1 ? '1 day left' : daysLeft + ' days left';
     }
 

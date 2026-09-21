@@ -142,13 +142,6 @@
     letter-spacing: 0.08em;
     text-transform: uppercase;
   }
-  .side-clock .planet-date{
-    margin: 0 0 3px;
-    text-align: center;
-    color: var(--accent-warm);
-    font-size: 9px;
-    letter-spacing: 0.04em;
-  }
   .side-clock .clock-note{
     margin-top: 12px;
     border-top: 1px solid var(--line);
