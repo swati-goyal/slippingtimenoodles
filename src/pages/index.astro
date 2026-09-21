@@ -179,21 +179,14 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 <script define:vars={{ archiveEntries }}>
   (function init500DayClock(){
     var cycleMs = 500 * 24 * 60 * 60 * 1000;
-    var stateKey = 'slipping-time-noodles-last-cycle';
+    var sharedStartMs = Date.parse('2026-09-16T00:00:00Z');
+    var sentCycleKey = 'slipping-time-noodles-email-sent-cycle';
     var emailAddress = 'hello@slippingtimenoodles.com';
     var hourEl = document.getElementById('sideClockHour');
     var minuteEl = document.getElementById('sideClockMinute');
     var statusEl = document.getElementById('sideClockStatus');
     var faceEl = document.getElementById('sideClockFace');
     if (!hourEl || !minuteEl || !statusEl || !faceEl) return;
-
-    var now = Date.now();
-    var saved = Number(localStorage.getItem(stateKey) || 0);
-    var lastCycleStart = saved && saved > 0 ? saved : now;
-
-    if (!saved || saved <= 0){
-      localStorage.setItem(stateKey, String(lastCycleStart));
-    }
 
     function composeMailto(){
       var subject = encodeURIComponent('500 days complete — congratulations');
@@ -214,6 +207,9 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     }
 
     function updateClock(){
+      var elapsedSinceSharedStart = Date.now() - sharedStartMs;
+      var cycleNumber = Math.max(0, Math.floor(elapsedSinceSharedStart / cycleMs));
+      var lastCycleStart = sharedStartMs + cycleNumber * cycleMs;
       var elapsed = Date.now() - lastCycleStart;
       var remaining = Math.max(0, cycleMs - elapsed);
       var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
@@ -225,14 +221,11 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       if (remaining <= 0){
         statusEl.textContent = '500 complete';
         var mailto = composeMailto();
-        var hasSent = localStorage.getItem('slipping-time-noodles-email-sent') === String(lastCycleStart);
+        var hasSent = localStorage.getItem(sentCycleKey) === String(cycleNumber);
         if (!hasSent){
-          localStorage.setItem('slipping-time-noodles-email-sent', String(lastCycleStart));
+          localStorage.setItem(sentCycleKey, String(cycleNumber));
           window.location.href = mailto;
         }
-        lastCycleStart = Date.now();
-        localStorage.setItem(stateKey, String(lastCycleStart));
-        localStorage.removeItem('slipping-time-noodles-email-sent');
         return;
       }
 
