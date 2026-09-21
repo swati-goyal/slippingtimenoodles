@@ -186,9 +186,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     // The local year turns on day 479, two days before the cycle itself ends.
     var markDay = planetaryYearDays - 1;
     var sharedStartMs = Date.parse('1988-08-19T02:00:00Z');
-    var sentCycleKey = 'slipping-time-noodles-email-sent-cycle';
-    var emailAddress = 'hello@slippingtimenoodles.com';
-    var celebratedCycle = null;
     var hourEl = document.getElementById('sideClockHour');
     var minuteEl = document.getElementById('sideClockMinute');
     var timeEl = document.getElementById('sideClockTime');
@@ -196,32 +193,6 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
     var statusEl = document.getElementById('sideClockStatus');
     var faceEl = document.getElementById('sideClockFace');
     if (!hourEl || !minuteEl || !timeEl || !yearEl || !statusEl || !faceEl) return;
-
-    function composeMailto(){
-      var subject = encodeURIComponent(planetaryYearDays + ' days complete — congratulations');
-      var body = encodeURIComponent(
-        'Congratulations on finishing another ' + planetaryYearDays + ' days on this spinning planet whose speed I can not feel.\n\nI hope this next orbit feels a little more alive, a little more honest, and a little less like a loop.\n\n— the time noodle'
-      );
-      return 'mailto:' + emailAddress + '?subject=' + subject + '&body=' + body;
-    }
-
-    function readSentCycle(){
-      try { return localStorage.getItem(sentCycleKey); }
-      catch (err) { return null; }
-    }
-
-    function writeSentCycle(value){
-      try { localStorage.setItem(sentCycleKey, value); }
-      catch (err) { return; }
-    }
-
-    function celebrateCycle(cycleNumber){
-      var key = String(cycleNumber);
-      if (celebratedCycle === key || readSentCycle() === key) return;
-      celebratedCycle = key;
-      writeSentCycle(key);
-      window.location.href = composeMailto();
-    }
 
     function buildFaceMarks(){
       for (var i = 0; i < earthHoursPerPlanetaryDay; i += 1){
@@ -253,17 +224,14 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       hourEl.style.transform = 'translate(-50%, -100%) rotate(' + ((msIntoDay / planetaryDayMs) * 360) + 'deg)';
       minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + ((msIntoHour / 3600000) * 360) + 'deg)';
 
-      // The clock never rests at zero — it rolls straight into the next planetary year.
-      // A completed cycle is therefore the first local day on the far side of that roll.
-      if (cycleNumber > 0 && elapsed < planetaryDayMs){
-        statusEl.textContent = planetaryYearDays + ' complete';
-        celebrateCycle(cycleNumber);
-        return;
-      }
-
       // Day 480 sits past the mark, so it wraps to the mark in the next cycle.
       var daysLeft = markDay - planetaryDay;
       if (daysLeft < 0) daysLeft += planetaryYearDays;
+
+      if (daysLeft === 0){
+        statusEl.textContent = 'happy birthday';
+        return;
+      }
 
       statusEl.textContent = daysLeft === 1 ? '1 day left' : daysLeft + ' days left';
     }
