@@ -1,11 +1,16 @@
 <aside class="side-clock" aria-live="polite">
-  <span class="label">500-day orbit</span>
+  <span class="label">local timekeeping</span>
   <div class="clock-shell">
-    <div class="clock-face" id="sideClockFace" aria-label="500-day countdown clock">
+    <div class="clock-face" id="sideClockFace" aria-label="500-day countdown clock, with 25 Earth hours in each local day">
       <div class="hand hour" id="sideClockHour"></div>
       <div class="hand minute" id="sideClockMinute"></div>
       <div class="center-dot"></div>
     </div>
   </div>
+  <div class="planet-year" id="sideClockYear">planetary year 01</div>
   <div class="status" id="sideClockStatus">still orbiting</div>
+  <details class="clock-note">
+    <summary>why 500 days?</summary>
+    <p>I am from a planet between Earth and Mars. Its year has exactly 500 days, and each day lasts 25 Earth hours. Earth says 36.7; local time says 27.</p>
+  </details>
 </aside>

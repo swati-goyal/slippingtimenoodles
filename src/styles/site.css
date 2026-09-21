@@ -134,6 +134,34 @@
     letter-spacing: 0.08em;
     text-transform: lowercase;
   }
+  .side-clock .planet-year{
+    margin: -2px 0 4px;
+    text-align: center;
+    color: var(--text-dim);
+    font-size: 9px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .side-clock .clock-note{
+    margin-top: 12px;
+    border-top: 1px solid var(--line);
+    padding-top: 9px;
+    color: var(--text-dim);
+    font-family: 'Literata', serif;
+    font-size: 11px;
+    line-height: 1.45;
+  }
+  .side-clock .clock-note summary{
+    cursor: pointer;
+    color: var(--accent-warm);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.06em;
+    list-style-position: inside;
+  }
+  .side-clock .clock-note p{
+    margin: 8px 0 0;
+  }
   @media (max-width: 900px){
     .side-clock{ width: 148px; }
     .side-clock .clock-face{ width: 100px; height: 100px; }

@@ -178,15 +178,17 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
 
 <script define:vars={{ archiveEntries }}>
   (function init500DayClock(){
-    var cycleMs = 500 * 24 * 60 * 60 * 1000;
+    var earthHoursPerPlanetaryDay = 25;
+    var cycleMs = 500 * earthHoursPerPlanetaryDay * 60 * 60 * 1000;
     var sharedStartMs = Date.parse('2026-09-16T00:00:00Z');
     var sentCycleKey = 'slipping-time-noodles-email-sent-cycle';
     var emailAddress = 'hello@slippingtimenoodles.com';
     var hourEl = document.getElementById('sideClockHour');
     var minuteEl = document.getElementById('sideClockMinute');
+    var yearEl = document.getElementById('sideClockYear');
     var statusEl = document.getElementById('sideClockStatus');
     var faceEl = document.getElementById('sideClockFace');
-    if (!hourEl || !minuteEl || !statusEl || !faceEl) return;
+    if (!hourEl || !minuteEl || !yearEl || !statusEl || !faceEl) return;
 
     function composeMailto(){
       var subject = encodeURIComponent('500 days complete — congratulations');
@@ -214,6 +216,7 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
       var remaining = Math.max(0, cycleMs - elapsed);
       var progress = Math.min(Math.max((cycleMs - remaining) / cycleMs, 0), 1);
       var angle = progress * 360;
+      yearEl.textContent = 'planetary year ' + String(cycleNumber + 1).padStart(2, '0');
 
       hourEl.style.transform = 'translate(-50%, -100%) rotate(' + angle + 'deg)';
       minuteEl.style.transform = 'translate(-50%, -100%) rotate(' + (angle * 2) + 'deg)';
@@ -229,7 +232,7 @@ const artwork = cmsArtwork.length ? cmsArtwork : [
         return;
       }
 
-      var daysLeft = Math.ceil(remaining / (24 * 60 * 60 * 1000));
+      var daysLeft = Math.ceil(remaining / (earthHoursPerPlanetaryDay * 60 * 60 * 1000));
       statusEl.textContent = daysLeft === 1 ? '1 day left' : daysLeft + ' days left';
     }
 
