@@ -1,0 +1,94 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArtworkSection from '../components/sections/ArtworkSection.astro';
+import { defaultHomePage, defaultArtwork } from '../lib/content';
+import { getHomePage, getArtwork } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+const cmsArtwork = await getArtwork();
+const artwork = cmsArtwork.length ? cmsArtwork : defaultArtwork;
+---
+<Layout title="Artwork" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <ArtworkSection />
+</Layout>
+
+<script define:vars={{ artwork }}>
+  var ART = artwork;
+
+  (function initCarousel(){
+    var track = document.getElementById('artTrack');
+    var dotsEl = document.getElementById('artDots');
+    var prevBtn = document.getElementById('artPrev');
+    var nextBtn = document.getElementById('artNext');
+    if (!track) return;
+
+    ART.forEach(function(art, i){
+      var slide = document.createElement('div');
+      slide.className = 'carousel-slide';
+      slide.id = 'artSlide-' + i;
+
+      var frame = document.createElement('div');
+      frame.className = 'art-frame';
+      if (art.src){
+        var img = document.createElement('img');
+        img.src = art.src;
+        img.alt = art.title;
+        frame.appendChild(img);
+      } else {
+        var ph = document.createElement('div');
+        ph.className = 'art-placeholder';
+        ph.textContent = '[ image placeholder \u2014 add a src ]';
+        frame.appendChild(ph);
+      }
+
+      var title = document.createElement('p');
+      title.className = 'art-title';
+      title.textContent = art.title;
+
+      var caption = document.createElement('p');
+      caption.className = 'art-caption';
+      caption.textContent = art.year + ' \u00b7 ' + art.caption;
+
+      slide.appendChild(frame);
+      slide.appendChild(title);
+      slide.appendChild(caption);
+      track.appendChild(slide);
+
+      var dot = document.createElement('button');
+      dot.className = 'dot' + (i === 0 ? ' active' : '');
+      dot.type = 'button';
+      dot.setAttribute('aria-label', 'Go to artwork ' + (i + 1));
+      dot.addEventListener('click', function(){
+        slide.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+      });
+      dotsEl.appendChild(dot);
+    });
+
+    var dots = Array.prototype.slice.call(dotsEl.children);
+
+    function setActiveDot(i){
+      dots.forEach(function(d, j){ d.classList.toggle('active', j === i); });
+    }
+
+    if ('IntersectionObserver' in window){
+      var observer = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if (entry.isIntersecting){
+            var idx = Array.prototype.indexOf.call(track.children, entry.target);
+            setActiveDot(idx);
+          }
+        });
+      }, { root: track, threshold: 0.6 });
+      Array.prototype.forEach.call(track.children, function(slide){ observer.observe(slide); });
+    }
+
+    function scrollByOne(dir){
+      var slideEl = track.children[0];
+      var gap = 20;
+      var amount = (slideEl ? slideEl.getBoundingClientRect().width : 300) + gap;
+      track.scrollBy({ left: dir * amount, behavior: 'smooth' });
+    }
+    prevBtn.addEventListener('click', function(){ scrollByOne(-1); });
+    nextBtn.addEventListener('click', function(){ scrollByOne(1); });
+  })();
+</script>

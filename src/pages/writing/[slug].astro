@@ -1,0 +1,51 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { defaultHomePage, defaultWriting } from '../../lib/content';
+import { getHomePage, getWriting } from '../../lib/sanity';
+
+export async function getStaticPaths() {
+  const published = await getWriting();
+  const pieces = published.length ? published : defaultWriting;
+
+  return pieces.map((piece, i) => ({
+    params: { slug: piece.slug },
+    props: {
+      piece,
+      prev: i > 0 ? pieces[i - 1] : null,
+      next: i < pieces.length - 1 ? pieces[i + 1] : null,
+    },
+  }));
+}
+
+const { piece, prev, next } = Astro.props;
+const homePage = (await getHomePage()) ?? defaultHomePage;
+
+const meta = [
+  piece.type,
+  piece.date,
+  piece.identity === 'knightess' ? 'as Knightess' : 'self',
+].filter(Boolean).join(' · ');
+---
+<Layout title={piece.title} footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <section id="piece">
+    <div class="section-head">
+      <span class="section-mark">&larr; <a href="/writing">writing</a></span>
+    </div>
+
+    <h2>{piece.title}</h2>
+    <p class="piece-meta">{meta}</p>
+
+    <div class={piece.type === 'poem' ? 'piece-body is-poem' : 'piece-body'}>{piece.body}</div>
+
+    {piece.tags && piece.tags.length > 0 && (
+      <div class="entry-tags">
+        {piece.tags.map((tag) => <span class="entry-tag">#{tag}</span>)}
+      </div>
+    )}
+
+    <nav class="piece-nav">
+      <span>{prev ? <a href={`/writing/${prev.slug}`}>&larr; {prev.title}</a> : null}</span>
+      <span>{next ? <a href={`/writing/${next.slug}`}>{next.title} &rarr;</a> : null}</span>
+    </nav>
+  </section>
+</Layout>

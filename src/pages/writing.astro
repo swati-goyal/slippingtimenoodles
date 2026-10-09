@@ -1,0 +1,55 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { defaultHomePage, defaultWriting } from '../lib/content';
+import { getHomePage, getWriting } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+const published = await getWriting();
+const pieces = published.length ? published : defaultWriting;
+const usingPlaceholders = published.length === 0;
+
+const links = homePage.writingLinks || defaultHomePage.writingLinks;
+const quoteLines = homePage.writingQuote || defaultHomePage.writingQuote;
+---
+<Layout title="Writing" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <section id="writing">
+    <div class="section-head">
+      <span class="section-mark">{homePage.writingMark}</span>
+      <h2>{homePage.writingTitle}</h2>
+    </div>
+    <p class="section-desc">{homePage.writingIntro}</p>
+
+    <p class="poem">
+      {quoteLines.map((line) => <span>{line}</span>)}
+    </p>
+
+    <ul class="page-index">
+      {pieces.map((piece) => (
+        <li>
+          <a href={`/writing/${piece.slug}`}>
+            <span class="index-label">{piece.title}</span>
+            <span class="index-blurb">
+              {piece.type}
+              {piece.date ? ` · ${piece.date}` : ''}
+              {piece.identity === 'knightess' ? ' · as Knightess' : ''}
+            </span>
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    {usingPlaceholders && (
+      <p class="empty-note">
+        Nothing published yet &mdash; these are the placeholder pieces from
+        <code>src/lib/content.ts</code>. Add Writing documents in the Studio and
+        they replace this list automatically.
+      </p>
+    )}
+
+    <div class="link-list">
+      {links.map((link) => (
+        <a class="link-pill" href={link.href || '#'}>{link.label}</a>
+      ))}
+    </div>
+  </section>
+</Layout>

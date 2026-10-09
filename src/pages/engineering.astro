@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import EngineeringSection from '../components/sections/EngineeringSection.astro';
+import { defaultHomePage } from '../lib/content';
+import { getHomePage } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+---
+<Layout title="Engineering" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <EngineeringSection
+    mark={homePage.engineeringMark}
+    title={homePage.engineeringTitle}
+    intro={homePage.engineeringIntro}
+    entries={homePage.engineeringEntries || defaultHomePage.engineeringEntries}
+  />
+</Layout>

@@ -12,6 +12,7 @@ export const writing = defineType({
     defineField({ name: 'date', title: 'Date', type: 'date' }),
     defineField({ name: 'tags', title: 'Tags', type: 'array', of: [{ type: 'string' }] }),
     defineField({ name: 'body', title: 'Body', type: 'text', rows: 12, validation: (rule) => rule.required() }),
+    defineField({ name: 'sortOrder', title: 'Sort order', type: 'number', description: 'Lower numbers come first. Leave blank to fall back to date.' }),
   ],
   preview: { select: { title: 'title', subtitle: 'type' } },
 });

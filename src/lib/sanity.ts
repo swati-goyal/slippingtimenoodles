@@ -53,19 +53,23 @@ export async function getHomePage() {
   }`);
 }
 
-export async function getArchiveEntries() {
+export async function getWriting() {
   if (!client) {
     return [];
   }
 
-  return client.fetch(`*[_type == "archiveEntry"] | order(sortOrder asc, _createdAt asc) {
+  const items = await client.fetch(`*[_type == "writing" && defined(slug.current)]
+    | order(sortOrder asc, date desc, _createdAt asc) {
     title,
+    "slug": slug.current,
     type,
     identity,
     date,
     tags,
     body
   }`);
+
+  return (items || []).map((item: { tags?: string[] }) => ({ ...item, tags: item.tags || [] }));
 }
 
 export function sanityImage(source: unknown) {

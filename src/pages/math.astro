@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import MathSection from '../components/sections/MathSection.astro';
+import { defaultHomePage } from '../lib/content';
+import { getHomePage } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+---
+<Layout title="Math &amp; Curiosities" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <MathSection
+    mark={homePage.mathMark}
+    title={homePage.mathTitle}
+    intro={homePage.mathIntro}
+    cards={homePage.mathCards || defaultHomePage.mathCards}
+  />
+</Layout>

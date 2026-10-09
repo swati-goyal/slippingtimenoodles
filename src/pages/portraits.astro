@@ -1,0 +1,16 @@
+---
+import Layout from '../layouts/Layout.astro';
+import PortraitsSection from '../components/sections/PortraitsSection.astro';
+import { defaultHomePage } from '../lib/content';
+import { getHomePage } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+---
+<Layout title="Portraits" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <PortraitsSection
+    mark={homePage.portraitMark}
+    title={homePage.portraitTitle}
+    intro={homePage.portraitIntro}
+    portraits={homePage.portraits || defaultHomePage.portraits}
+  />
+</Layout>

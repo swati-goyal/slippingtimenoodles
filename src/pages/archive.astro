@@ -1,0 +1,131 @@
+---
+import Layout from '../layouts/Layout.astro';
+import ArchiveSection from '../components/sections/ArchiveSection.astro';
+import { defaultHomePage, defaultWriting } from '../lib/content';
+import { getHomePage, getWriting } from '../lib/sanity';
+
+const homePage = (await getHomePage()) ?? defaultHomePage;
+const published = await getWriting();
+const entries = published.length ? published : defaultWriting;
+---
+<Layout title="Archive" footerTitle={homePage.footerTitle} footerLine={homePage.footerLine}>
+  <ArchiveSection
+    mark={homePage.archiveMark}
+    title={homePage.archiveTitle}
+    intro={homePage.archiveIntro}
+  />
+</Layout>
+
+<script define:vars={{ entries }}>
+  var ENTRIES = entries;
+
+  (function initArchive(){
+    var typeChipsEl = document.getElementById('typeChips');
+    var tagChipsEl = document.getElementById('tagChips');
+    var searchEl = document.getElementById('archiveSearch');
+    var listEl = document.getElementById('entryList');
+    var countEl = document.getElementById('archiveCount');
+    if (!listEl) return;
+
+    var activeType = 'all';
+    var activeTags = {};
+
+    function el(tag, cls, text){
+      var e = document.createElement(tag);
+      if (cls) e.className = cls;
+      if (text !== undefined) e.textContent = text;
+      return e;
+    }
+
+    var types = ['all'].concat(ENTRIES.map(function(e){ return e.type; })
+      .filter(function(t, i, arr){ return arr.indexOf(t) === i; }));
+
+    var allTags = ENTRIES.reduce(function(acc, e){ return acc.concat(e.tags); }, [])
+      .filter(function(t, i, arr){ return arr.indexOf(t) === i; })
+      .sort();
+
+    types.forEach(function(t){
+      var chip = el('button', 'chip' + (t === 'all' ? ' active' : ''), t);
+      chip.type = 'button';
+      chip.addEventListener('click', function(){
+        activeType = t;
+        Array.prototype.forEach.call(typeChipsEl.children, function(c){ c.classList.remove('active'); });
+        chip.classList.add('active');
+        render();
+      });
+      typeChipsEl.appendChild(chip);
+    });
+
+    allTags.forEach(function(tag){
+      var chip = el('button', 'chip', '#' + tag);
+      chip.type = 'button';
+      chip.addEventListener('click', function(){
+        if (activeTags[tag]) { delete activeTags[tag]; chip.classList.remove('active'); }
+        else { activeTags[tag] = true; chip.classList.add('active'); }
+        render();
+      });
+      tagChipsEl.appendChild(chip);
+    });
+
+    searchEl.addEventListener('input', render);
+
+    function matches(entry){
+      if (activeType !== 'all' && entry.type !== activeType) return false;
+      var neededTags = Object.keys(activeTags);
+      if (neededTags.length > 0){
+        var hasAll = neededTags.every(function(t){ return entry.tags.indexOf(t) !== -1; });
+        if (!hasAll) return false;
+      }
+      var q = searchEl.value.trim().toLowerCase();
+      if (q){
+        var hay = (entry.title + ' ' + entry.tags.join(' ') + ' ' + entry.body).toLowerCase();
+        if (hay.indexOf(q) === -1) return false;
+      }
+      return true;
+    }
+
+    function render(){
+      listEl.innerHTML = '';
+      var results = ENTRIES.filter(matches);
+      countEl.textContent = results.length + (results.length === 1 ? ' entry' : ' entries');
+
+      if (results.length === 0){
+        listEl.appendChild(el('p', 'no-results', 'nothing matches yet \u2014 try clearing a filter.'));
+        return;
+      }
+
+      results.forEach(function(entry){
+        var details = el('details', 'entry');
+        var summary = document.createElement('summary');
+
+        var title = el('span', 'entry-title', entry.title);
+        var meta = el('span', 'entry-meta');
+        var typeSpan = el('span', 'entry-type ' + entry.type, entry.type);
+        meta.appendChild(typeSpan);
+        meta.appendChild(document.createTextNode(' \u00b7 ' + entry.date + ' \u00b7 ' + (entry.identity === 'knightess' ? 'as Knightess' : 'self')));
+
+        summary.appendChild(title);
+        summary.appendChild(meta);
+
+        var body = el('div', 'entry-body' + (entry.type === 'poem' ? ' is-poem' : ''), entry.body);
+
+        var tagsRow = el('div', 'entry-tags');
+        entry.tags.forEach(function(t){ tagsRow.appendChild(el('span', 'entry-tag', '#' + t)); });
+
+        details.appendChild(summary);
+        details.appendChild(body);
+        details.appendChild(tagsRow);
+
+        if (entry.slug){
+          var permalink = el('a', 'entry-permalink', 'read on its own page \u2192');
+          permalink.href = '/writing/' + entry.slug;
+          details.appendChild(permalink);
+        }
+
+        listEl.appendChild(details);
+      });
+    }
+
+    render();
+  })();
+</script>

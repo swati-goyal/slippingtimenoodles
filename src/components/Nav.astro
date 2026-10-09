@@ -1,0 +1,21 @@
+---
+import { pages } from '../lib/content';
+
+const here = Astro.url.pathname.replace(/\/$/, '') || '/';
+const isCurrent = (href) => here === href || here.startsWith(href + '/');
+---
+
+<nav class="site-nav" aria-label="Sections">
+  <a class="site-nav-home" href="/">slipping time noodles</a>
+  <ul>
+    {pages.map((page) => (
+      <li>
+        <a
+          href={page.href}
+          class={isCurrent(page.href) ? 'current' : undefined}
+          aria-current={isCurrent(page.href) ? 'page' : undefined}
+        >{page.label}</a>
+      </li>
+    ))}
+  </ul>
+</nav>
